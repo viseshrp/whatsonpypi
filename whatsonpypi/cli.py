@@ -6,10 +6,11 @@ Console script
 
 import click
 
-from .whatsonpypi import run
+from whatsonpypi import __version__
 
 
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
+@click.version_option(__version__, '-v', '--version')
 @click.argument('package')
 def main(package):
     """
@@ -20,7 +21,7 @@ def main(package):
 
     """
     try:
-        run(package)
+        click.secho(package, fg='green', bold=True, underline=True)
     except Exception as e:
         # all other exceptions
         raise click.ClickException(e)
