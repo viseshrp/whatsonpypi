@@ -3,8 +3,11 @@
 
 """The setup script."""
 import io
+import sys
 
 from setuptools import setup, find_packages
+
+assert sys.version_info >= (3, 6, 0), "whatsonpypi requires Python 3.6+"
 
 # Package meta-data.
 NAME = 'whatsonpypi'
@@ -13,7 +16,7 @@ DESCRIPTION = "CLI tool to find package info on PyPI"
 AUTHOR = "Visesh Prasad"
 EMAIL = 'viseshrprasad@gmail.com'
 URL = 'https://github.com/viseshrp/whatsonpypi'
-REQUIRES_PYTHON = ">=2.7"
+REQUIRES_PYTHON = ">=3.6"
 REQUIREMENTS = ['Click>=6.0', ]
 SETUP_REQUIREMENTS = ['pytest-runner', ]
 TEST_REQUIREMENTS = ['pytest', ]
@@ -43,13 +46,10 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Natural Language :: English',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3 :: Only",
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     entry_points={

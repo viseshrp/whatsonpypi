@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
-"""Console script for whatsonpypi."""
-import sys
+"""
+Console script
+"""
+
 import click
 
 from .whatsonpypi import run
 
+
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
-def main(args=None):
+@click.argument('package')
+def main(package):
     """
     CLI tool to
 
@@ -16,11 +20,10 @@ def main(args=None):
 
     """
     try:
-        run(args)
+        run(package)
     except Exception as e:
         # all other exceptions
         raise click.ClickException(e)
-
 
 
 if __name__ == "__main__":
