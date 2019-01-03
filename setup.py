@@ -11,7 +11,7 @@ assert sys.version_info >= (3, 6, 0), "whatsonpypi requires Python 3.6+"
 
 # Package meta-data.
 NAME = 'whatsonpypi'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 DESCRIPTION = "CLI tool to find package info on PyPI"
 AUTHOR = "Visesh Prasad"
 EMAIL = 'viseshrprasad@gmail.com'
