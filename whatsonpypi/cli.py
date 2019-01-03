@@ -20,7 +20,6 @@ def main(package):
     Example usages:
 
     $ whatsonpypi django
-
     """
     try:
         click.secho(get_query_response(package=package), fg='green', bold=True)

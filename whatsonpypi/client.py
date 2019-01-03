@@ -4,7 +4,7 @@ API client
 from requests import Request, Session, hooks
 
 from .constants import PYPI_BASE_URL
-from .exceptions import PackageAbsentException
+from .exceptions import PackageNotProvidedError, PackageNotFoundError
 
 
 class WoppResponse:
@@ -48,7 +48,6 @@ class WoppClient:
         :return: response serialized by WoppResponse object
         """
         url = self._build_url(package, version)
-
         req_kwargs = {
             'method': 'GET',
             'url': url,
@@ -63,6 +62,10 @@ class WoppClient:
             prepared_request,
             timeout=timeout,
         )
+
+        if response.status_code == 404:
+            raise PackageNotFoundError("Sorry, but that package couldn't be found on PyPI.")
+
         # serialize response
         wopp_response = WoppResponse(int(response.status_code), response.json())
         return wopp_response
@@ -76,7 +79,7 @@ class WoppClient:
         :return: fully qualified URL
         """
         if package is None:
-            raise PackageAbsentException('A package name is needed to proceed.')
+            raise PackageNotProvidedError('A package name is needed to proceed.')
 
         if version is not None:
             url = "{}/{}/{}/json".format(self.base_url, package, version)

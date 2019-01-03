@@ -16,6 +16,7 @@ def get_query_response(package=None, version=None):
     """
     client = WoppClient(request_hooks={'response': clean_response})
     response = client.request(package=package, version=version)
+
     # returns version by default
     return response.latest_version
 

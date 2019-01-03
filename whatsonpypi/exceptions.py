@@ -14,7 +14,13 @@ class WoppException(Exception):
     """
 
 
-class PackageAbsentException(WoppException):
+class PackageNotProvidedError(WoppException):
     """
     Raised when no package is available for the client to request
+    """
+
+
+class PackageNotFoundError(WoppException):
+    """
+    Raised when a package is not found on PyPI
     """
