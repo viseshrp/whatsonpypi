@@ -18,13 +18,11 @@ whatsonpypi
         :alt: Downloads
 
 
-
-
 CLI tool to find package info on PyPI
 
 
-* GitHub: https://github.com/viseshrp/heroku.env
-* PyPI: https://pypi.python.org/pypi/heroku.env
+* GitHub: https://github.com/viseshrp/whatsonpypi
+* PyPI: https://pypi.python.org/pypi/whatsonpypi
 * Free software: MIT license
 * Documentation: https://whatsonpypi.readthedocs.io.
 
@@ -45,9 +43,16 @@ Requirements
 Features
 --------
 
-* TODO
+* Find the latest version of a package on PyPI
 
 Examples:
+
+.. code-block:: bash
+
+    $ whatsonpypi django
+    2.1.4
+
+* More to come ..
 
 
 Credits
