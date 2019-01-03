@@ -40,7 +40,7 @@ setup(
     include_package_data=True,
     license="MIT license",
     classifiers=[
-        'Development Status :: 4 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
