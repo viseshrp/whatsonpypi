@@ -3,10 +3,11 @@
 """
 Console script
 """
+from __future__ import unicode_literals  # unicode support for py2
 
 import click
-
 from whatsonpypi import __version__
+
 from .whatsonpypi import get_query_response
 
 

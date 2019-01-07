@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 """Utility methods"""
+from __future__ import unicode_literals  # unicode support for py2
 
 
 def clean_response(r, *args, **kwargs):
