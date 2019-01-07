@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+
 """
 API client
 """
+from __future__ import unicode_literals  # unicode support for py2
+
 from requests import Request, Session, hooks
 
 from .constants import PYPI_BASE_URL
 from .exceptions import PackageNotProvidedError, PackageNotFoundError
 
 
-class WoppResponse:
+class WoppResponse(object):
     """
     Serializer for the response from PyPI
     """
@@ -26,7 +30,7 @@ class WoppResponse:
         return self.info.get('version')
 
 
-class WoppClient:
+class WoppClient(object):
     """
     Client for accessing the PyPI API
     """

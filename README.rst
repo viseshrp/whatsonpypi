@@ -37,7 +37,7 @@ Installation
 Requirements
 ------------
 
-#. Python 3.6+
+#. Python 2.7+
 
 
 Features
@@ -45,12 +45,12 @@ Features
 
 * Find the latest version of a package on PyPI
 
-Examples:
+    Examples:
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    $ whatsonpypi django
-    2.1.4
+        $ whatsonpypi django
+        2.1.4
 
 * More to come ..
 
