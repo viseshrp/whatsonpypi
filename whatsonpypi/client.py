@@ -6,6 +6,8 @@ API client
 from __future__ import unicode_literals  # unicode support for py2
 
 from requests import Request, Session, hooks
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 from .constants import PYPI_BASE_URL
 from .exceptions import PackageNotProvidedError, PackageNotFoundError
@@ -42,11 +44,12 @@ class WoppClient(object):
         # default_hooks() returns {'response': []}
         self.request_hooks = request_hooks or hooks.default_hooks()
 
-    def request(self, timeout=3.1, package=None, version=None):
+    def request(self, package=None, version=None, timeout=3.1, max_retries=3, ):
         """
         Make a HTTP GET request with the provided params
 
         :param timeout: request timeout seconds
+        :param max_retries: number of times to retry on failure
         :param package: name of the python package to search
         :param version: version of the python package to search
         :return: response serialized by WoppResponse object
@@ -59,9 +62,22 @@ class WoppClient(object):
         }
 
         session = self.session or Session()
+        # instantiate Request
         request = Request(**req_kwargs)
         # Applies session-level state such as cookies to your request
         prepared_request = session.prepare_request(request)
+
+        # use the adapter for retries
+        retries = Retry(
+            total=max_retries,
+            backoff_factor=0.1,
+            status_forcelist=[500, 502, 503, 504],
+        )
+        adapter = HTTPAdapter(max_retries=retries)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+
+        # and fire!
         response = session.send(
             prepared_request,
             timeout=timeout,

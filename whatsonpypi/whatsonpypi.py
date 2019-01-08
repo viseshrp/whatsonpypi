@@ -20,7 +20,3 @@ def get_query_response(package=None, version=None):
 
     # returns version by default
     return response.latest_version
-
-
-if __name__ == '__main__':
-    get_query_response('django')
