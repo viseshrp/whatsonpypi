@@ -28,8 +28,54 @@ class WoppResponse(object):
         return self.content.get('info')
 
     @property
+    def name(self):
+        return self.info.get('name')
+
+    @property
     def latest_version(self):
         return self.info.get('version')
+
+    @property
+    def summary(self):
+        return self.info.get('summary')
+
+    @property
+    def description(self):
+        return self.info.get('description')
+
+    @property
+    def homepage(self):
+        return self.info.get('home_page')
+
+    @property
+    def pypi_url(self):
+        return self.info.get('project_url') or self.info.get('package_url')
+
+    @property
+    def project_urls(self):
+        return self.info.get('project_urls')
+
+    @property
+    def requires_python(self):
+        return self.info.get('requires_python')
+
+    @property
+    def license(self):
+        return self.info.get('license')
+
+    @property
+    def author(self):
+        return self.info.get('author')
+
+    @property
+    def author_email(self):
+        return self.info.get('author_email')
+
+    @property
+    def releases(self):
+        # todo : tail or head for latest or oldest releases
+        release_content = self.content.get('releases')
+        return list(release_content.keys()) if release_content else []
 
 
 class WoppClient(object):
@@ -81,6 +127,7 @@ class WoppClient(object):
         response = session.send(
             prepared_request,
             timeout=timeout,
+            allow_redirects=True,
         )
 
         if response.status_code == 404:
