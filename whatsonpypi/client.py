@@ -36,10 +36,6 @@ class WoppResponse(object):
         return self.json.get('summary')
 
     @property
-    def description(self):
-        return self.json.get('description')
-
-    @property
     def homepage(self):
         return self.json.get('home_page')
 

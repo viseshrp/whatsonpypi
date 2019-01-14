@@ -51,7 +51,6 @@ def clean_response(r, *args, **kwargs):
                 'name': info.get('name'),
                 'current_version': info.get('version'),
                 'summary': info.get('summary'),
-                'description': info.get('description'),
                 'homepage': info.get('home_page'),
                 'package_url': info.get('project_url') or info.get('package_url'),
                 'project_urls': info.get('project_urls'),
