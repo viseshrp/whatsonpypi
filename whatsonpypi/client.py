@@ -18,64 +18,72 @@ class WoppResponse(object):
     Serializer for the response from PyPI
     """
 
-    def __init__(self, status_code, json_content):
+    def __init__(self, status_code, json):
         self.status_code = status_code
-        self.content = json_content
+        self.json = json
         self.ok = self.status_code < 400
 
     @property
-    def info(self):
-        return self.content.get('info')
-
-    @property
     def name(self):
-        return self.info.get('name')
+        return self.json.get('name')
 
     @property
-    def latest_version(self):
-        return self.info.get('version')
+    def current_version(self):
+        return self.json.get('current_version')
 
     @property
     def summary(self):
-        return self.info.get('summary')
+        return self.json.get('summary')
 
     @property
     def description(self):
-        return self.info.get('description')
+        return self.json.get('description')
 
     @property
     def homepage(self):
-        return self.info.get('home_page')
+        return self.json.get('home_page')
 
     @property
-    def pypi_url(self):
-        return self.info.get('project_url') or self.info.get('package_url')
+    def package_url(self):
+        return self.json.get('package_url')
 
     @property
     def project_urls(self):
-        return self.info.get('project_urls')
+        return self.json.get('project_urls')
 
     @property
     def requires_python(self):
-        return self.info.get('requires_python')
+        return self.json.get('requires_python')
 
     @property
     def license(self):
-        return self.info.get('license')
+        return self.json.get('license')
 
     @property
     def author(self):
-        return self.info.get('author')
+        return self.json.get('author')
 
     @property
     def author_email(self):
-        return self.info.get('author_email')
+        return self.json.get('author_email')
+
+    @property
+    def current_release_url(self):
+        return self.json.get('current_release_url')
+
+    @property
+    def current_pkg_urls(self):
+        return self.json.get('current_pkg_urls')
 
     @property
     def releases(self):
         # todo : tail or head for latest or oldest releases
-        release_content = self.content.get('releases')
-        return list(release_content.keys()) if release_content else []
+        releases = self.json.get('releases')
+        # can be a list or dict, but we always return a list
+        if isinstance(releases, dict):
+            return list(releases.keys())
+        else:
+            return releases
 
 
 class WoppClient(object):
@@ -134,7 +142,7 @@ class WoppClient(object):
             raise PackageNotFoundError("Sorry, but that package couldn't be found on PyPI.")
 
         # serialize response
-        wopp_response = WoppResponse(int(response.status_code), response.json())
+        wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
         return wopp_response
 
     def _build_url(self, package=None, version=None):
