@@ -6,6 +6,8 @@ API client
 from __future__ import unicode_literals  # unicode support for py2
 
 from requests import Request, Session, hooks
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 from .constants import PYPI_BASE_URL
 from .exceptions import PackageNotProvidedError, PackageNotFoundError
@@ -16,18 +18,77 @@ class WoppResponse(object):
     Serializer for the response from PyPI
     """
 
-    def __init__(self, status_code, json_content):
+    def __init__(self, status_code, json):
         self.status_code = status_code
-        self.content = json_content
+        self.json = json
         self.ok = self.status_code < 400
 
     @property
-    def info(self):
-        return self.content.get('info')
+    def name(self):
+        return self.json.get('name')
 
     @property
     def latest_version(self):
-        return self.info.get('version')
+        return self.json.get('latest_version')
+
+    @property
+    def summary(self):
+        return self.json.get('summary')
+
+    @property
+    def homepage(self):
+        return self.json.get('home_page')
+
+    @property
+    def package_url(self):
+        return self.json.get('package_url')
+
+    @property
+    def project_urls(self):
+        return self.json.get('project_urls')
+
+    @property
+    def requires_python(self):
+        return self.json.get('requires_python')
+
+    @property
+    def license(self):
+        return self.json.get('license')
+
+    @property
+    def author(self):
+        return self.json.get('author')
+
+    @property
+    def author_email(self):
+        return self.json.get('author_email')
+
+    @property
+    def latest_release_url(self):
+        return self.json.get('latest_release_url')
+
+    @property
+    def dependencies(self):
+        return self.json.get('dependencies')
+
+    @property
+    def latest_pkg_urls(self):
+        return self.json.get('latest_pkg_urls')
+
+    @property
+    def releases(self):
+        # all releases
+        return self.json.get('releases')
+
+    @property
+    def releases_pkg_info(self):
+        # info of every release's package
+        return self.json.get('releases_pkg_info')
+
+    @property
+    def latest_releases(self):
+        # last 5 releases
+        return self.releases[:5]
 
 
 class WoppClient(object):
@@ -42,16 +103,16 @@ class WoppClient(object):
         # default_hooks() returns {'response': []}
         self.request_hooks = request_hooks or hooks.default_hooks()
 
-    def request(self, timeout=3.1, package=None, version=None):
+    def request(self, package=None, timeout=3.1, max_retries=3, ):
         """
         Make a HTTP GET request with the provided params
 
         :param timeout: request timeout seconds
+        :param max_retries: number of times to retry on failure
         :param package: name of the python package to search
-        :param version: version of the python package to search
         :return: response serialized by WoppResponse object
         """
-        url = self._build_url(package, version)
+        url = self._build_url(package)
         req_kwargs = {
             'method': 'GET',
             'url': url,
@@ -59,35 +120,43 @@ class WoppClient(object):
         }
 
         session = self.session or Session()
+        # instantiate Request
         request = Request(**req_kwargs)
         # Applies session-level state such as cookies to your request
         prepared_request = session.prepare_request(request)
+
+        # use the adapter for retries
+        retries = Retry(
+            total=max_retries,
+            backoff_factor=0.1,
+            status_forcelist=[500, 502, 503, 504],
+        )
+        adapter = HTTPAdapter(max_retries=retries)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+
+        # and fire!
         response = session.send(
             prepared_request,
             timeout=timeout,
+            allow_redirects=True,
         )
 
         if response.status_code == 404:
             raise PackageNotFoundError("Sorry, but that package couldn't be found on PyPI.")
 
         # serialize response
-        wopp_response = WoppResponse(int(response.status_code), response.json())
+        wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
         return wopp_response
 
-    def _build_url(self, package=None, version=None):
+    def _build_url(self, package=None):
         """
         Builds the URL with the path params provided.
 
         :param package: name of package
-        :param version: version of package
         :return: fully qualified URL
         """
         if package is None:
             raise PackageNotProvidedError('A package name is needed to proceed.')
 
-        if version is not None:
-            url = "{}/{}/{}/json".format(self.base_url, package, version)
-        else:
-            url = "{}/{}/json".format(self.base_url, package)
-
-        return url
+        return "{}/{}/json".format(self.base_url, package)

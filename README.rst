@@ -31,7 +31,7 @@ Installation
 ------------
 .. code-block:: bash
 
-    pip install whatsonpypi
+    pip install -U whatsonpypi
 
 
 Requirements
@@ -43,17 +43,44 @@ Requirements
 Features
 --------
 
-* Find the latest version of a package on PyPI
+* Find information on a package on PyPI
 
     Examples:
 
     .. code-block:: bash
 
         $ whatsonpypi django
-        2.1.4
+        NAME
+            Django
+        LATEST VERSION
+            2.1.5
+        SUMMARY
+            A high-level Python Web framework that encourages rapid development and clean, pragmatic design.
+        PACKAGE URL
+            https://pypi.org/project/Django/
+        AUTHOR
+            Django Software Foundation
+        LATEST RELEASES
+            2.2a1, 2.1rc1, 2.1b1, 2.1a1, 2.1.5
+
+
+* For more information..
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django --more
+        ...
+
 
 * More to come ..
 
+See all options with:
+
+.. code-block:: bash
+
+    $ whatsonpypi --help
 
 Credits
 -------
