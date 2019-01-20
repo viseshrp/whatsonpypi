@@ -3,6 +3,37 @@
 """Utility methods"""
 from __future__ import unicode_literals  # unicode support for py2
 
+import click
+
+
+def pretty(input_, indent=0):
+    """
+    Pretty print dictionary
+
+    :param input_: input
+    :param indent: number of tabs
+    :return: None
+    """
+
+    def get_readable_key(key_):
+        # capitalize and remove _
+        if '_' in key_:
+            return key_.upper().replace('_', ' ')
+        else:
+            return key_.upper()
+
+    if isinstance(input_, dict):
+        for key, value in input_.items():
+            # only print if there's something
+            if value:
+                click.secho('\t' * indent + get_readable_key(str(key)), fg='green', bold=True)
+                if isinstance(value, dict):
+                    pretty(value, indent + 1)
+                else:
+                    click.echo('\t' * (indent + 1) + str(value))
+    else:
+        click.echo(input_)
+
 
 def clean_response(r, *args, **kwargs):
     """
@@ -24,18 +55,17 @@ def clean_response(r, *args, **kwargs):
         :return: dict
         """
         package_urls = {}
-        if pkg_url_list:
-            for pkg_url in pkg_url_list:
-                package_urls.update({
-                    pkg_url.get('packagetype'): {
-                        'md5': pkg_url.get('digests').get('md5'),
-                        'sha256': pkg_url.get('digests').get('sha256'),
-                        'filename': pkg_url.get('filename'),
-                        'has_sig': pkg_url.get('has_sig'),
-                        'size': pkg_url.get('size'),
-                        'upload_time': pkg_url.get('upload_time'),
-                        'url': pkg_url.get('url'),
-                    }})
+        for pkg_url in pkg_url_list:
+            package_urls.update({
+                pkg_url.get('packagetype'): {
+                    'md5': pkg_url.get('digests').get('md5'),
+                    'sha256': pkg_url.get('digests').get('sha256'),
+                    'filename': pkg_url.get('filename'),
+                    'has_sig': pkg_url.get('has_sig'),
+                    'size': pkg_url.get('size'),
+                    'upload_time': pkg_url.get('upload_time'),
+                    'url': pkg_url.get('url'),
+                }})
         return package_urls
 
     # only run hooks for 200
@@ -49,41 +79,50 @@ def clean_response(r, *args, **kwargs):
         if info:
             cleaned_response = {
                 'name': info.get('name'),
-                'current_version': info.get('version'),
+                'latest_version': info.get('version'),
                 'summary': info.get('summary'),
                 'homepage': info.get('home_page'),
                 'package_url': info.get('project_url') or info.get('package_url'),
+                'author': info.get('author'),
+            }
+
+        releases = dirty_response.get('releases')
+
+        # based on click options
+        more_out = kwargs.pop('more_out', False)
+        if more_out:
+            cleaned_response.update({
                 'project_urls': info.get('project_urls'),
                 'requires_python': info.get('requires_python'),
                 'license': info.get('license'),
-                'author': info.get('author'),
                 'author_email': info.get('author_email'),
-                'current_release_url': info.get('release_url'),
+                'latest_release_url': info.get('release_url'),
                 'dependencies': info.get('requires_dist'),
-            }
-
-        # todo: do everything below only if needed,
-        # based on click options... eg: --detailed
-        current_pkg_urls = dirty_response.get('urls')
-        cleaned_response.update({
-            'current_pkg_urls': convert_pkg_info(current_pkg_urls),
-        })
-
-        releases = dirty_response.get('releases')
-        if releases:
-            releases_info = {}
-            for key, val in releases.items():
-                releases_info[key] = convert_pkg_info(val)
-
-            cleaned_response.update({
-                'releases': releases_info,
             })
 
+            latest_pkg_urls = dirty_response.get('urls')
+            if latest_pkg_urls:
+                cleaned_response.update({
+                    'latest_pkg_urls': convert_pkg_info(latest_pkg_urls),
+                })
+
+            if releases:
+                releases_info = {}
+                for key, val in releases.items():
+                    if val:
+                        releases_info[key] = convert_pkg_info(val)
+
+                cleaned_response.update({
+                    'releases': releases_info,
+                })
+
         # if we never added the release list info before,
-        # add the minimal release info anyway
+        # add the minimal release info anyway: last 5 releases
         if 'releases' not in cleaned_response:
+            releases = list(releases.keys())
+            releases.reverse()
             cleaned_response.update({
-                'releases': list(releases.keys()) if releases else [],
+                'latest_releases': releases[:5] if releases else [],
             })
 
         r.cleaned_json = cleaned_response

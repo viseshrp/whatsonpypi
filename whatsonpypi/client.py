@@ -28,8 +28,8 @@ class WoppResponse(object):
         return self.json.get('name')
 
     @property
-    def current_version(self):
-        return self.json.get('current_version')
+    def latest_version(self):
+        return self.json.get('latest_version')
 
     @property
     def summary(self):
@@ -64,22 +64,24 @@ class WoppResponse(object):
         return self.json.get('author_email')
 
     @property
-    def current_release_url(self):
-        return self.json.get('current_release_url')
+    def latest_release_url(self):
+        return self.json.get('latest_release_url')
 
     @property
-    def current_pkg_urls(self):
-        return self.json.get('current_pkg_urls')
+    def dependencies(self):
+        return self.json.get('dependencies')
+
+    @property
+    def latest_pkg_urls(self):
+        return self.json.get('latest_pkg_urls')
 
     @property
     def releases(self):
-        # todo : tail or head for latest or oldest releases
-        releases = self.json.get('releases')
-        # can be a list or dict, but we always return a list
-        if isinstance(releases, dict):
-            return list(releases.keys())
-        else:
-            return releases
+        return self.json.get('releases')
+
+    @property
+    def latest_releases(self):
+        return self.json.get('latest_releases')
 
 
 class WoppClient(object):

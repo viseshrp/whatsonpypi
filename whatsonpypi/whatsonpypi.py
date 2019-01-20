@@ -3,20 +3,27 @@
 """Module containing the core functionality."""
 from __future__ import unicode_literals  # unicode support for py2
 
+from functools import partial
+
 from .client import WoppClient
 from .utils import clean_response
 
 
-def get_query_response(package=None, version=None):
+def get_query_response(package=None, version=None, more_out=False):
     """
     Run query against PyPI API
 
     :param package: name of package
     :param version: version of package
-    :return:
+    :param more_out: should output should contain more detail?
+    :return: output
     """
-    client = WoppClient(request_hooks={'response': clean_response})
+    client = WoppClient(request_hooks={'response': partial(clean_response, more_out=more_out)})
     response = client.request(package=package, version=version)
+    out_dict = response.json
+    # default out
+    return out_dict
 
-    # returns version by default
-    return response.latest_version
+
+if __name__ == '__main__':
+    get_query_response('django')
