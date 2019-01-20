@@ -21,6 +21,7 @@ from .whatsonpypi import get_query_response
     is_flag=True,
     required=True,
     default=False,
+    show_default=True,
     help="Flag to enable expanded output"
 )
 def main(package, more):
