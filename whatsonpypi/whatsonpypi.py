@@ -25,7 +25,7 @@ def get_output(response, more_out=False):
             'requires_python': response.requires_python,
             'license': response.license,
             'latest_release_url': response.latest_release_url,
-            'dependencies': response.dependencies,
+            'dependencies': ', '.join(response.dependencies),
         })
     else:
         out_dict.update({
