@@ -49,7 +49,7 @@ Features
 
     .. code-block:: bash
 
-        $ whatsonpypi whatsonpypi
+        $ whatsonpypi django
         NAME
             Django
         LATEST VERSION
