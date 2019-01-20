@@ -107,16 +107,17 @@ class WoppClient(object):
         # default_hooks() returns {'response': []}
         self.request_hooks = request_hooks or hooks.default_hooks()
 
-    def request(self, package=None, timeout=3.1, max_retries=3, ):
+    def request(self, package=None, version=None, timeout=3.1, max_retries=3):
         """
         Make a HTTP GET request with the provided params
 
         :param timeout: request timeout seconds
         :param max_retries: number of times to retry on failure
         :param package: name of the python package to search
+        :param version: version of the python package to search
         :return: response serialized by WoppResponse object
         """
-        url = self._build_url(package)
+        url = self._build_url(package, version)
         req_kwargs = {
             'method': 'GET',
             'url': url,
@@ -153,14 +154,20 @@ class WoppClient(object):
         wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
         return wopp_response
 
-    def _build_url(self, package=None):
+    def _build_url(self, package=None, version=None):
         """
         Builds the URL with the path params provided.
 
         :param package: name of package
+        :param version: version of package
         :return: fully qualified URL
         """
         if package is None:
             raise PackageNotProvidedError('A package name is needed to proceed.')
 
-        return "{}/{}/json".format(self.base_url, package)
+        if version is not None:
+            url = "{}/{}/{}/json".format(self.base_url, package, version)
+        else:
+            url = "{}/{}/json".format(self.base_url, package)
+
+        return url

@@ -13,7 +13,7 @@ from .exceptions import DocsNotFoundError
 def get_output(response, more_out=False):
     out_dict = {
         'name': response.name,
-        'latest_version': response.latest_version,
+        'current_version': response.latest_version,
         'summary': response.summary,
         'homepage': response.homepage,
         'package_url': response.package_url,
@@ -27,7 +27,8 @@ def get_output(response, more_out=False):
             'project_urls': response.project_urls,
             'requires_python': response.requires_python,
             'license': response.license,
-            'latest_release_url': response.latest_release_url,
+            'current_release_url': response.latest_release_url,
+            'current_package_info': response.latest_pkg_urls,
             'dependencies': ', '.join(response.dependencies),
         })
     else:
@@ -38,17 +39,18 @@ def get_output(response, more_out=False):
     return out_dict
 
 
-def get_query_response(package=None, more_out=False, launch_docs=False):
+def get_query_response(package=None, version=None, more_out=False, launch_docs=False):
     """
     Run query against PyPI API
 
     :param package: name of package
+    :param version: version of package
     :param more_out: should output should contain more detail?
     :param launch_docs: should doc URL be launched?
     :return: output
     """
     client = WoppClient(request_hooks={'response': clean_response})
-    response = client.request(package=package)
+    response = client.request(package=package, version=version)
 
     if launch_docs:
         url = response.project_docs

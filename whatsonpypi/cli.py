@@ -41,8 +41,14 @@ def main(package, more, docs):
     $ whatsonpypi django
     """
     try:
+        # get version if given
+        version = None
+        if "==" in package:
+            package, version = package.split('==')
+
         output = get_query_response(
             package=package,
+            version=version,
             more_out=more,
             launch_docs=docs,
         )

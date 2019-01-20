@@ -6,6 +6,7 @@ History
 ------------------
 
 * Added -d/--docs to launch docs URL in browser
+* Allow version specific querying
 
 0.1.2 (2019-01-20)
 ------------------

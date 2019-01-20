@@ -74,6 +74,16 @@ Features
         ...
 
 
+* Version specific information..
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django==2.1.4 --more
+        ...
+
+
 * Launch documentation URL of project in a browser tab
 
     Examples:
