@@ -9,17 +9,16 @@ from .client import WoppClient
 from .utils import clean_response
 
 
-def get_query_response(package=None, version=None, more_out=False):
+def get_query_response(package=None, more_out=False):
     """
     Run query against PyPI API
 
     :param package: name of package
-    :param version: version of package
     :param more_out: should output should contain more detail?
     :return: output
     """
     client = WoppClient(request_hooks={'response': partial(clean_response, more_out=more_out)})
-    response = client.request(package=package, version=version)
+    response = client.request(package=package)
     out_dict = response.json
     # default out
     return out_dict

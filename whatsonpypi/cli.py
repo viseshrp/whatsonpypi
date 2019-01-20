@@ -34,7 +34,6 @@ def main(package, more):
     try:
         output = get_query_response(
             package=package,
-            version=None,
             more_out=more,
         )
         pretty(output)
