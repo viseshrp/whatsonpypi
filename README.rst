@@ -74,6 +74,15 @@ Features
         ...
 
 
+* Launch documentation URL of project in a browser tab
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django --docs
+
+
 * More to come ..
 
 See all options with:

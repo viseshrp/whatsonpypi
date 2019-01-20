@@ -37,7 +37,7 @@ class WoppResponse(object):
 
     @property
     def homepage(self):
-        return self.json.get('home_page')
+        return self.json.get('homepage')
 
     @property
     def package_url(self):
@@ -46,6 +46,10 @@ class WoppResponse(object):
     @property
     def project_urls(self):
         return self.json.get('project_urls')
+
+    @property
+    def project_docs(self):
+        return self.project_urls.get('Documentation') or self.homepage
 
     @property
     def requires_python(self):

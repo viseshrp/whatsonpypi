@@ -3,8 +3,11 @@
 """Module containing the core functionality."""
 from __future__ import unicode_literals  # unicode support for py2
 
+import click
+
 from .client import WoppClient
 from .utils import clean_response
+from .exceptions import DocsNotFoundError
 
 
 def get_output(response, more_out=False):
@@ -35,16 +38,25 @@ def get_output(response, more_out=False):
     return out_dict
 
 
-def get_query_response(package=None, more_out=False):
+def get_query_response(package=None, more_out=False, launch_docs=False):
     """
     Run query against PyPI API
 
     :param package: name of package
     :param more_out: should output should contain more detail?
+    :param launch_docs: should doc URL be launched?
     :return: output
     """
     client = WoppClient(request_hooks={'response': clean_response})
     response = client.request(package=package)
+
+    if launch_docs:
+        url = response.project_docs
+        if not url:
+            raise DocsNotFoundError("Could not find any documentation or homepage URL to launch.")
+
+        return click.launch(url)
+
     out_dict = get_output(response, more_out=more_out)
     # default out
     return out_dict

@@ -24,3 +24,9 @@ class PackageNotFoundError(WoppException):
     """
     Raised when a package is not found on PyPI
     """
+
+
+class DocsNotFoundError(WoppException):
+    """
+    Raised when a package does not have documentation or homepage urls
+    """

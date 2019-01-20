@@ -24,7 +24,15 @@ from .whatsonpypi import get_query_response
     show_default=True,
     help="Flag to enable expanded output"
 )
-def main(package, more):
+@click.option(
+    '-d',
+    '--docs',
+    is_flag=True,
+    required=False,
+    default=False,
+    help="Flag to open docs or homepage of project"
+)
+def main(package, more, docs):
     """
     CLI tool to find the latest version of a package on PyPI.
 
@@ -36,6 +44,7 @@ def main(package, more):
         output = get_query_response(
             package=package,
             more_out=more,
+            launch_docs=docs,
         )
         pretty(output)
     except Exception as e:
