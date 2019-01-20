@@ -77,11 +77,18 @@ class WoppResponse(object):
 
     @property
     def releases(self):
+        # all releases
         return self.json.get('releases')
 
     @property
+    def releases_pkg_info(self):
+        # info of every release's package
+        return self.json.get('releases_pkg_info')
+
+    @property
     def latest_releases(self):
-        return self.json.get('latest_releases')
+        # last 5 releases
+        return self.releases[:5]
 
 
 class WoppClient(object):
