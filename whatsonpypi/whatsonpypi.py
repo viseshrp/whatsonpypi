@@ -6,8 +6,11 @@ from __future__ import unicode_literals  # unicode support for py2
 import click
 
 from .client import WoppClient
+from .exceptions import (
+    DocsNotFoundError,
+    URLLaunchError
+)
 from .utils import clean_response
-from .exceptions import DocsNotFoundError
 
 
 def get_output(response, more_out=False):
@@ -47,7 +50,7 @@ def get_query_response(package=None, version=None, more_out=False, launch_docs=F
     :param version: version of package
     :param more_out: should output should contain more detail?
     :param launch_docs: should doc URL be launched?
-    :return: output
+    :return: output if available, or None
     """
     client = WoppClient(request_hooks={'response': clean_response})
     response = client.request(package=package, version=version)
@@ -57,7 +60,11 @@ def get_query_response(package=None, version=None, more_out=False, launch_docs=F
         if not url:
             raise DocsNotFoundError("Could not find any documentation or homepage URL to launch.")
 
-        return click.launch(url)
+        exit_status = click.launch(url)
+        if exit_status:  # if 1
+            raise URLLaunchError("There was a problem opening the URL in your browser.")
+        
+        return
 
     out_dict = get_output(response, more_out=more_out)
     # default out

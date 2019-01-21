@@ -30,3 +30,9 @@ class DocsNotFoundError(WoppException):
     """
     Raised when a package does not have documentation or homepage urls
     """
+
+
+class URLLaunchError(WoppException):
+    """
+    Raised when there's a problem opening a URL in the browser
+    """

@@ -52,7 +52,9 @@ def main(package, more, docs):
             more_out=more,
             launch_docs=docs,
         )
-        pretty(output)
+        # output is not always expected and maybe None sometimes.
+        if output:
+            pretty(output)
     except Exception as e:
         # all other exceptions
         raise click.ClickException(e)
