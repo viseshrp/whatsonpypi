@@ -14,7 +14,7 @@ AUTHOR = "Visesh Prasad"
 EMAIL = 'viseshrprasad@gmail.com'
 URL = 'https://github.com/viseshrp/whatsonpypi'
 REQUIRES_PYTHON = ">=2.7"
-REQUIREMENTS = ['future>=0.15.2', 'Click>=6.0', 'requests>=2.18.0', ]
+REQUIREMENTS = ['future>=0.15.2', 'Click>=7.0', 'requests>=2.18.0', ]
 SETUP_REQUIREMENTS = ['pytest-runner', ]
 TEST_REQUIREMENTS = ['pytest', ]
 
