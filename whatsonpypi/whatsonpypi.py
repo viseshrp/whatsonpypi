@@ -136,7 +136,7 @@ def add_pkg_to_req(package, version, req_dir):
                     if REQUIREMENTS_REPLACE_COMMENT.lower() in line.lower().replace(' ', ''):
                         # only replace the first instance of #wopp
                         needs_append = False
-                        data[line_num] = line.replace(line, package + "==" + version + "\n")
+                        data[line_num] = line.replace(line, "{}=={}\n".format(package, version))
                         break
 
             # move pointer back to start
@@ -150,7 +150,7 @@ def add_pkg_to_req(package, version, req_dir):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, 'a') as file:
-                file.write(package + "==" + version + "\n")
+                file.write("{}=={}\n".format(package, version))
 
 
 def get_query_response(
