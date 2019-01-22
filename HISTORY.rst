@@ -2,9 +2,10 @@
 History
 =======
 
-0.1.3 (2019-01-20)
+0.1.3 (2019-01-21)
 ------------------
 
+* Add -a/--add to enable adding packages to requirement files.
 * Added -d/--docs to launch docs URL in browser
 * Allow version specific querying
 
