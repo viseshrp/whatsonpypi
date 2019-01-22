@@ -93,7 +93,7 @@ Features
         $ whatsonpypi django --docs
 
 
-* Add packages to your requirement files.
+* Add packages to your requirements files.
 
     Examples:
 
@@ -148,12 +148,12 @@ Features
         $ whatsonpypi pytest-runner==4.1 --add
 
 
-    Optionally, directory to search for requirement files can be specified with ``--req-path``.
+    Optionally, directory to search for requirement files can be specified with ``--req-dir``.
     Both absolute and relative paths are allowed. Must be a directory.
 
     .. code-block:: bash
 
-        $ whatsonpypi pytest-runner==4.1 --add --req-path /Users/Me/Documents/GitHub/project/requirements
+        $ whatsonpypi pytest-runner==4.1 --add --req-dir /Users/Me/Documents/GitHub/project/requirements
 
     Default value (if not provided) is the directory where the command is run.
 

@@ -10,4 +10,3 @@ twine==1.12.1
 
 pytest==4.1.1
 pytest-runner==4.2
-click==7.0

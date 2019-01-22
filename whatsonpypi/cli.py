@@ -45,7 +45,7 @@ from .whatsonpypi import get_query_response
          " mention a comment '#wopp' on its own line which will be replaced with the dependency."
          " Existing dependencies will be replaced with newer versions. Dependency version"
          " by default is the latest unless specified explicitly with 'whatsonpypi package==version'."
-         " Directory to search for requirement files can be specified with --req-path"
+         " Directory to search for requirement files can be specified with --req-dir"
 )
 @click.option(
     '-r',
