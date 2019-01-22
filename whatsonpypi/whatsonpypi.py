@@ -3,12 +3,11 @@
 """Module containing the core functionality."""
 from __future__ import unicode_literals  # unicode support for py2
 
+import collections
 import glob
 import re
-import collections
-import click
 
-from itertools import chain
+import click
 
 from .client import WoppClient
 from .constants import REQUIREMENTS_FILE_PATTERN, REQUIREMENTS_REPLACE_COMMENT
@@ -16,7 +15,8 @@ from .exceptions import (
     DocsNotFoundError,
     URLLaunchError
 )
-from .utils import clean_response, convert_to_int_list
+from .param_types import MultipleChoice
+from .utils import clean_response
 
 ALL_OPTION = 'ALL'
 
@@ -64,7 +64,8 @@ def get_req_files(req_dir):
 
     # if there's only one file available, don't prompt.
     if num_req_files > 1:
-        file_choice_list = list(chain(req_files, [ALL_OPTION]))
+        file_choice_list = [ALL_OPTION]
+        file_choice_list.extend(req_files)
         # add the `all` option
 
         choice_map = collections.OrderedDict(
@@ -72,34 +73,32 @@ def get_req_files(req_dir):
         )  # creates dict of form {'1': './requirements.txt', ...}
 
         choices = choice_map.keys()
-        default_choice = file_choice_list.index(ALL_OPTION) + 1
+        default_choice = '1'
 
         # build prompt
         choice_lines = ['{} - {}'.format(k, v) for k, v in choice_map.items()]
         prompt_text = '\n'.join([
             "We found {} files matching the pattern '{}'. Please choose if"
             " you'd like to modify just one, many or all of them. You can specify"
-            " one or multiple options with a comma.. example: 1,2,3 or just 4."
-            " '{}' means that all files will be checked and modified. Hit Ctrl+C to"
-            " quit".format(num_req_files, REQUIREMENTS_FILE_PATTERN, ALL_OPTION),
+            " one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
+            "'{}' means that all files will be checked and modified, which is the"
+            " default. Hit Ctrl+C to quit.".format(num_req_files, REQUIREMENTS_FILE_PATTERN, ALL_OPTION),
             '\n'.join(choice_lines),
-            "Choose from {}".format(', '.join(choices))
+            "Choose from the options",
         ])
 
         # prompt user
         req_file_ids = click.prompt(
             prompt_text,
-            type=str,
+            type=MultipleChoice(choices),
+            default=default_choice,
             show_default=True,
-            value_proc=convert_to_int_list,
+            show_choices=True,
         )
         # if the all option is not included in the input,
         # only use the files that are needed.
         if default_choice not in req_file_ids:
-            try:
-                req_files = [choice_map[str(id_)] for id_ in req_file_ids if id_ != default_choice]
-            except KeyError:
-                raise click.exceptions.UsageError("Sorry, that's not a valid option.")
+            req_files = [choice_map[str(id_)] for id_ in req_file_ids if id_ != default_choice]
 
     return req_files
 

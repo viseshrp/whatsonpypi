@@ -6,15 +6,6 @@ from __future__ import unicode_literals  # unicode support for py2
 import click
 
 
-def convert_to_int_list(choice_input):
-    choice_list = choice_input.split(',')
-    try:
-        int_list = [int(choice.strip()) for choice in choice_list]
-    except ValueError:
-        raise click.exceptions.UsageError("Only integers are accepted.")
-    return int_list
-
-
 def pretty(input_, indent=0):
     """
     Pretty print dictionary
