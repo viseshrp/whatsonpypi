@@ -155,23 +155,7 @@ Features
 
         $ whatsonpypi pytest-runner==4.1 --add --req-dir /Users/Me/Documents/GitHub/project/requirements
 
-    Default value (if not provided) is the directory where the command is run.
-
-
-    Limitation:
-
-    Comments have to be on their own lines:
-
-    .. code-block:: yaml
-
-        # Django
-        django==2.1.5
-
-    This is fine but **DON'T** do this:
-
-    .. code-block:: yaml
-
-        django==2.1.5 # Django
+    Default value (if not provided) is the directory where the command is run (cwd).
 
 
 See all options with:

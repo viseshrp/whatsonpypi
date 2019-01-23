@@ -10,15 +10,19 @@ import re
 import click
 
 from .client import WoppClient
-from .constants import REQUIREMENTS_FILE_PATTERN, REQUIREMENTS_REPLACE_COMMENT
+from .constants import (
+    REQUIREMENTS_FILE_PATTERN,
+    REQUIREMENTS_REPLACE_COMMENT,
+    REQ_LINE_REGEX,
+    ALL_OPTION,
+)
 from .exceptions import (
     DocsNotFoundError,
-    URLLaunchError
+    URLLaunchError,
+    InvalidVersionError,
 )
 from .param_types import MultipleChoice
 from .utils import clean_response
-
-ALL_OPTION = 'ALL'
 
 
 def get_output(response, more_out=False):
@@ -105,11 +109,12 @@ def get_req_files(req_dir):
 
 def add_pkg_to_req(package, version, req_dir):
     req_files = get_req_files(req_dir)
+    req_line = "{}=={}".format(package, version)
 
     for file_path in req_files:
         needs_append = True  # should we append package to the end of file
 
-        click.echo("Modifying file {} ...".format(file_path))
+        click.echo("Modifying file: {} ...".format(file_path))
         with open(file_path, 'r+') as file:
             # read all lines at once into memory.
             # NOTE: This is not memory efficient, but requirements files are small
@@ -117,25 +122,29 @@ def add_pkg_to_req(package, version, req_dir):
             # and write to it, but that seems overkill for now.
             data = file.readlines()
             for line_num, line in enumerate(data):
-                line = line.strip()
+                line = line.strip().lower()
                 if line:
-                    # first, search if the pkg already exists
-                    if package.lower() in line.lower():
-                        package_, version_ = re.split("==|>=|<=", line)
-                        needs_append = False
-                        # if yes, check the version.
-                        if version != version_:
-                            # replace and end it.
-                            data[line_num] = line.replace(version_, version + "\n")
-                        else:
-                            click.echo("Package is already set to the latest/desired version.")
-                        break
+                    if not line.startswith("#"):
+                        # first, search if the pkg already exists
+                        reg_search = re.search(REQ_LINE_REGEX, line)
+                        if reg_search:
+                            package_ = reg_search.group(1)
+                            version_ = reg_search.group(6)
+                            if package.lower() == package_:
+                                needs_append = False
+                                # if yes, check the version.
+                                if version != version_:
+                                    # replace and end it.
+                                    data[line_num] = re.sub(REQ_LINE_REGEX, req_line, line)
+                                else:
+                                    click.echo("Package is already set to the latest/desired version.")
+                                break
                     # if pkg is absent, check for the '#wopp' comment.
-                    # ignore case, handle empty spaces
-                    if REQUIREMENTS_REPLACE_COMMENT.lower() in line.lower().replace(' ', ''):
+                    # handle empty spaces
+                    if REQUIREMENTS_REPLACE_COMMENT.lower() in line.replace(' ', ''):
                         # only replace the first instance of #wopp
                         needs_append = False
-                        data[line_num] = line.replace(line, "{}=={}\n".format(package, version))
+                        data[line_num] = line.replace(line, req_line + "\n")
                         break
 
             # move pointer back to start
@@ -149,7 +158,7 @@ def add_pkg_to_req(package, version, req_dir):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, 'a') as file:
-                file.write("{}=={}\n".format(package, version))
+                file.write(req_line + "\n")
 
 
 def get_query_response(
