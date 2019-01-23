@@ -19,9 +19,10 @@ from .constants import (
 from .exceptions import (
     DocsNotFoundError,
     URLLaunchError,
+    BadRequirementsFormatError,
 )
 from .param_types import MultipleChoice
-from .utils import clean_response
+from .utils import clean_response, extract_pkg_version
 
 
 def get_output(response, more_out=False):
@@ -87,7 +88,7 @@ def get_req_files(req_dir):
             "'{}' means that all files will be checked and modified, which is the"
             " default. Hit Ctrl+C to quit.".format(num_req_files, REQUIREMENTS_FILE_PATTERN, ALL_OPTION),
             '\n'.join(choice_lines),
-            "Choose from the options",
+            "Hit Enter to use the default or choose from the options",
         ])
 
         # prompt user
@@ -124,21 +125,22 @@ def add_pkg_to_req(package, version, req_dir):
             for line_num, line in enumerate(data):
                 line = line.strip().lower()
                 if line:
-                    if not line.startswith("#"):
+                    if not line.startswith("#"):  # not a comment
                         # first, search if the pkg already exists
-                        reg_search = re.search(REQ_LINE_REGEX, line)
-                        if reg_search:
-                            package_ = reg_search.group(1)
-                            version_ = reg_search.group(6)
-                            if package.lower() == package_:
-                                needs_append = False
-                                # if yes, check the version.
-                                if version != version_:
-                                    # replace and end it.
-                                    data[line_num] = re.sub(REQ_LINE_REGEX, req_line, line)
-                                else:
-                                    click.echo("Package is already set to the latest/desired version.")
-                                break
+                        package_, version_ = extract_pkg_version(line)
+
+                        if version_ is None:
+                            raise BadRequirementsFormatError("Your requirements are not in the right format.")
+
+                        if package.lower() == package_:
+                            needs_append = False
+                            # if yes, check the version.
+                            if version != version_:
+                                # replace and end it.
+                                data[line_num] = re.sub(REQ_LINE_REGEX, req_line, line)
+                            else:
+                                click.echo("Package is already set to the latest/desired version.")
+                            break
                     # if pkg is absent, check for the '#wopp' comment.
                     # handle empty spaces
                     if REQUIREMENTS_REPLACE_COMMENT.lower() in line.replace(' ', ''):

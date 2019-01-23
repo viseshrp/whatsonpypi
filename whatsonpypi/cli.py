@@ -6,9 +6,9 @@ Console script
 from __future__ import unicode_literals  # unicode support for py2
 
 import click
-from whatsonpypi import __version__
 
-from .utils import pretty
+from whatsonpypi import __version__
+from .utils import pretty, extract_pkg_version
 from .whatsonpypi import get_query_response
 
 
@@ -68,12 +68,10 @@ def main(package, more, docs, add, req_dir):
     """
     try:
         # get version if given
-        version = None
-        if "==" in package:
-            package, version = package.split('==')
+        package_, version = extract_pkg_version(package)
 
         output = get_query_response(
-            package=package,
+            package=package_ or package,
             version=version,
             more_out=more,
             launch_docs=docs,

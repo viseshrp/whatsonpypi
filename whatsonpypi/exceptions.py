@@ -36,3 +36,9 @@ class URLLaunchError(WoppException):
     """
     Raised when there's a problem opening a URL in the browser
     """
+
+
+class BadRequirementsFormatError(WoppException):
+    """
+    Raised when the requirements file is not in the right format.
+    """

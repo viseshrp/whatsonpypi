@@ -3,7 +3,32 @@
 """Utility methods"""
 from __future__ import unicode_literals  # unicode support for py2
 
+import re
+
 import click
+
+from .constants import REQ_LINE_REGEX
+
+
+def extract_pkg_version(in_str):
+    """
+    Use regex to extract package and version
+
+    :param in_str: input string
+    :return: tuple of pkg, version
+    """
+    package = None
+    version = None
+
+    try:
+        reg_search = re.search(REQ_LINE_REGEX, in_str)
+        if reg_search:
+            package = reg_search.group(1)
+            version = reg_search.group(6)
+    except IndexError:
+        pass
+
+    return package, version
 
 
 def pretty(input_, indent=0):
