@@ -45,17 +45,17 @@ def get_output(response, more_out=False):
     if more_out:
         out_dict.update({
             'author_email': response.author_email,
-            'releases': ', '.join(response.releases),
+            'releases': ', '.join(response.releases) if response.releases else None,
             'project_urls': response.project_urls,
             'requires_python': response.requires_python,
             'license': response.license,
             'current_release_url': response.latest_release_url,
             'current_package_info': response.latest_pkg_urls,
-            'dependencies': ', '.join(response.dependencies),
+            'dependencies': ', '.join(response.dependencies) if response.dependencies else None,
         })
     else:
         out_dict.update({
-            'latest_releases': ', '.join(response.latest_releases),
+            'latest_releases': ', '.join(response.latest_releases) if response.latest_releases else None,
         })
 
     return out_dict
