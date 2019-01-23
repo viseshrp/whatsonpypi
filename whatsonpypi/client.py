@@ -122,6 +122,10 @@ class WoppClient(object):
             'method': 'GET',
             'url': url,
             'hooks': self.request_hooks,
+            'headers': {
+                'Accept': 'application/json',
+                'User-Agent': 'https://github.com/viseshrp/whatsonpypi',
+            }
         }
 
         session = self.session or Session()
