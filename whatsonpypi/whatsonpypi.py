@@ -19,7 +19,6 @@ from .constants import (
 from .exceptions import (
     DocsNotFoundError,
     URLLaunchError,
-    InvalidVersionError,
 )
 from .param_types import MultipleChoice
 from .utils import clean_response
@@ -111,6 +110,7 @@ def add_pkg_to_req(package, version, req_dir):
     req_files = get_req_files(req_dir)
     req_line = "{}=={}".format(package, version)
 
+    click.echo("Adding {} ...".format(req_line))
     for file_path in req_files:
         needs_append = True  # should we append package to the end of file
 

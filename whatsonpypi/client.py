@@ -148,7 +148,7 @@ class WoppClient(object):
         )
 
         if response.status_code == 404:
-            raise PackageNotFoundError("Sorry, but that package couldn't be found on PyPI.")
+            raise PackageNotFoundError("Sorry, but that package/version couldn't be found on PyPI.")
 
         # serialize response
         wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
