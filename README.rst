@@ -74,7 +74,89 @@ Features
         ...
 
 
-* More to come ..
+* Version specific information..
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django==2.1.4 --more
+        ...
+
+
+* Launch documentation URL of project in a browser tab
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django --docs
+
+
+* Add packages to your requirements files.
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django --add
+
+    By default, it searches for files with names matching ``requirements*.txt``
+    in the current working directory and adds the dependency to the end of the
+    file.
+
+    If there's more than one file, you will see a prompt allowing you to select the files
+    that should be modified.
+
+    If you want the dependency to be added to a specific line,
+    mention a comment ``#wopp`` on its own line, which will be replaced with the dependency:
+
+    Example:
+
+    Do this in your requirements.txt:
+
+    .. code-block:: yaml
+
+        # Django
+        django==2.1.5
+        # testing
+        pytest==4.1.1
+        #wopp
+
+    Then running this:
+
+    .. code-block:: bash
+
+        $ whatsonpypi pytest-runner --add
+
+    will produce this:
+
+    .. code-block:: yaml
+
+        # Django
+        django==2.1.5
+        # testing
+        pytest==4.1.1
+        pytest-runner==4.2
+
+
+    Existing dependencies will be replaced with newer versions. Dependency version
+    by default is the latest unless specified explicitly like:
+
+    .. code-block:: bash
+
+        $ whatsonpypi pytest-runner==4.1 --add
+
+
+    Optionally, directory to search for requirement files can be specified with ``--req-dir``.
+    Both absolute and relative paths are allowed. Must be a directory.
+
+    .. code-block:: bash
+
+        $ whatsonpypi pytest-runner==4.1 --add --req-dir /Users/Me/Documents/GitHub/project/requirements
+
+    Default value (if not provided) is the directory where the command is run (cwd).
+
 
 See all options with:
 

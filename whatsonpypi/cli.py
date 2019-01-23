@@ -6,9 +6,9 @@ Console script
 from __future__ import unicode_literals  # unicode support for py2
 
 import click
-from whatsonpypi import __version__
 
-from .utils import pretty
+from whatsonpypi import __version__
+from .utils import pretty, extract_pkg_version
 from .whatsonpypi import get_query_response
 
 
@@ -24,7 +24,41 @@ from .whatsonpypi import get_query_response
     show_default=True,
     help="Flag to enable expanded output"
 )
-def main(package, more):
+@click.option(
+    '-d',
+    '--docs',
+    is_flag=True,
+    required=False,
+    default=False,
+    help="Flag to open docs or homepage of project"
+)
+@click.option(
+    '-a',
+    '--add',
+    is_flag=True,
+    required=False,
+    default=False,
+    help="Flag to enable adding of dependencies to requirement files."
+         " By default, it searches for files with names matching requirements*.txt"
+         " in the current working directory and adds the dependency to the end of the"
+         " file. If you want the dependency to be added to a specific line,"
+         " mention a comment '#wopp' on its own line which will be replaced with the dependency."
+         " Existing dependencies will be replaced with newer versions. Dependency version"
+         " by default is the latest unless specified explicitly with 'whatsonpypi package==version'."
+         " Directory to search for requirement files can be specified with --req-dir"
+)
+@click.option(
+    '-r',
+    '--req-dir',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True,
+                    readable=True, writable=True, resolve_path=True,
+                    allow_dash=False),
+    required=False,
+    default=".",
+    show_default=True,
+    help="Directory to search for requirement files. Only used when --add is used."
+)
+def main(package, more, docs, add, req_dir):
     """
     CLI tool to find the latest version of a package on PyPI.
 
@@ -33,11 +67,20 @@ def main(package, more):
     $ whatsonpypi django
     """
     try:
+        # get version if given
+        package_, version = extract_pkg_version(package)
+
         output = get_query_response(
-            package=package,
+            package=package_ or package,
+            version=version,
             more_out=more,
+            launch_docs=docs,
+            add_to_req=add,
+            req_dir=req_dir
         )
-        pretty(output)
+        # output is not always expected and maybe None sometimes.
+        if output:
+            pretty(output)
     except Exception as e:
         # all other exceptions
         raise click.ClickException(e)
