@@ -42,3 +42,9 @@ class BadRequirementsFormatError(WoppException):
     """
     Raised when the requirements file is not in the right format.
     """
+
+
+class RequirementsFilesNotFoundError(WoppException):
+    """
+    Raised when no requirements files are found in provided directory path.
+    """

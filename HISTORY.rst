@@ -2,6 +2,12 @@
 History
 =======
 
+0.2.3 (2019-01-26)
+------------------
+
+* add --req-pattern to allow specifying search pattern for requirements files
+* raise Error when no requirements files are found
+
 0.2.2 (2019-01-23)
 ------------------
 

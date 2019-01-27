@@ -101,11 +101,20 @@ Features
 
         $ whatsonpypi django --add
 
+
     By default, it searches for files with names matching ``requirements*.txt``
     in the current working directory and adds the dependency to the end of the
     file.
 
-    If there's more than one file, you will see a prompt allowing you to select the files
+    You can change the filename pattern to search for. The pattern may contain simple
+    shell-style wildcards.
+
+    .. code-block:: bash
+
+        $ whatsonpypi django --add --req-pattern "*.txt"
+
+
+    **If there's more than one file**, you will see a prompt allowing you to select the files
     that should be modified.
 
     If you want the dependency to be added to a specific line,

@@ -11,7 +11,6 @@ import click
 
 from .client import WoppClient
 from .constants import (
-    REQUIREMENTS_FILE_PATTERN,
     REQUIREMENTS_REPLACE_COMMENT,
     REQ_LINE_REGEX,
     ALL_OPTION,
@@ -20,6 +19,7 @@ from .exceptions import (
     DocsNotFoundError,
     URLLaunchError,
     BadRequirementsFormatError,
+    RequirementsFilesNotFoundError
 )
 from .param_types import MultipleChoice
 from .utils import clean_response, extract_pkg_version
@@ -61,10 +61,16 @@ def get_output(response, more_out=False):
     return out_dict
 
 
-def get_req_files(req_dir):
-    req_files = glob.glob(req_dir + "/" + REQUIREMENTS_FILE_PATTERN)
+def get_req_files(req_dir, req_pattern):
+    req_files = glob.glob(req_dir + "/" + req_pattern)
     # prompt user only if there's more than one requirements file.
     num_req_files = len(req_files)
+
+    if not num_req_files:
+        raise RequirementsFilesNotFoundError(
+            "No files were found matching pattern '{}' in the provided directory path :\n{}".format(
+                req_pattern, req_dir
+            ))
 
     # if there's only one file available, don't prompt.
     if num_req_files > 1:
@@ -86,7 +92,7 @@ def get_req_files(req_dir):
             " you'd like to modify just one, many or all of them. You can specify"
             " one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
             "'{}' means that all files will be checked and modified, which is the"
-            " default. Hit Ctrl+C to quit.".format(num_req_files, REQUIREMENTS_FILE_PATTERN, ALL_OPTION),
+            " default. Hit Ctrl+C to quit.".format(num_req_files, req_pattern, ALL_OPTION),
             '\n'.join(choice_lines),
             "Hit Enter to use the default or choose from the options",
         ])
@@ -107,8 +113,8 @@ def get_req_files(req_dir):
     return req_files
 
 
-def add_pkg_to_req(package, version, req_dir):
-    req_files = get_req_files(req_dir)
+def add_pkg_to_req(package, version, req_dir, req_pattern):
+    req_files = get_req_files(req_dir, req_pattern)
     req_line = "{}=={}".format(package, version)
 
     click.echo("Adding {} ...".format(req_line))
@@ -169,7 +175,8 @@ def get_query_response(
     more_out=False,
     launch_docs=False,
     add_to_req=False,
-    req_dir=None
+    req_dir=None,
+    req_pattern=None,
 ):
     """
     Run query against PyPI API and then do stuff based on user options.
@@ -199,7 +206,7 @@ def get_query_response(
 
     # add pkg as dep to requirements files if needed.
     if add_to_req:
-        add_pkg_to_req(response.name, version or response.latest_version, req_dir)
+        add_pkg_to_req(response.name, version or response.latest_version, req_dir, req_pattern)
         return
 
     # get the output
