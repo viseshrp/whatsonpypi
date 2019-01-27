@@ -78,7 +78,7 @@ def main(package, more, docs, add, req_dir):
             add_to_req=add,
             req_dir=req_dir
         )
-        # output is not always expected and maybe None sometimes.
+        # output is not always expected and might be None sometimes.
         if output:
             pretty(output)
     except Exception as e:

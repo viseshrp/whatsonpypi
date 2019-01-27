@@ -20,6 +20,7 @@ from .exceptions import (
     DocsNotFoundError,
     URLLaunchError,
     BadRequirementsFormatError,
+    RequirementsFilesNotFoundError
 )
 from .param_types import MultipleChoice
 from .utils import clean_response, extract_pkg_version
@@ -65,6 +66,12 @@ def get_req_files(req_dir):
     req_files = glob.glob(req_dir + "/" + REQUIREMENTS_FILE_PATTERN)
     # prompt user only if there's more than one requirements file.
     num_req_files = len(req_files)
+
+    if not num_req_files:
+        raise RequirementsFilesNotFoundError(
+            "No files were found matching pattern '{}' in the provided directory path :\n{}".format(
+                REQUIREMENTS_FILE_PATTERN, req_dir
+            ))
 
     # if there's only one file available, don't prompt.
     if num_req_files > 1:
