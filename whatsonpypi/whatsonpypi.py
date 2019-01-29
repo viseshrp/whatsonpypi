@@ -166,7 +166,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, 'a') as file:
-                file.write(req_line + "\n")
+                file.write("\n" + req_line + "\n")
 
 
 def get_query_response(
@@ -187,6 +187,7 @@ def get_query_response(
     :param launch_docs: should doc URL be launched?
     :param add_to_req: should the package be added as a dependency to requirements files?
     :param req_dir: Directory to search for requirement files
+    :param req_pattern: Filename pattern for searching requirements files
     :return: output if available, or None
     """
     client = WoppClient(request_hooks={'response': clean_response})
