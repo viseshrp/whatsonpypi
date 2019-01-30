@@ -67,7 +67,15 @@ from .whatsonpypi import get_query_response
     show_default=True,
     help="Filename pattern for searching requirements files."
 )
-def main(package, more, docs, add, req_dir, req_pattern):
+@click.option(
+    '-c',
+    '--comment',
+    type=str,
+    required=False,
+    show_default=False,
+    help="Comment to be added for the dependency when using --add."
+)
+def main(package, more, docs, add, req_dir, req_pattern, comment):
     """
     CLI tool to find the latest version of a package on PyPI.
 
@@ -86,7 +94,8 @@ def main(package, more, docs, add, req_dir, req_pattern):
             launch_docs=docs,
             add_to_req=add,
             req_dir=req_dir,
-            req_pattern=req_pattern
+            req_pattern=req_pattern,
+            comment=comment,
         )
         # output is not always expected and might be None sometimes.
         if output:

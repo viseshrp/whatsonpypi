@@ -113,9 +113,15 @@ def get_req_files(req_dir, req_pattern):
     return req_files
 
 
-def add_pkg_to_req(package, version, req_dir, req_pattern):
+def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
     req_files = get_req_files(req_dir, req_pattern)
     req_line = "{}=={}".format(package, version)
+
+    repl_str = ''
+    if comment:
+        # add comment if provided.
+        repl_str += '# {}\n'.format(comment)
+    repl_str += req_line
 
     click.echo("Adding {} ...".format(req_line))
     for file_path in req_files:
@@ -126,13 +132,13 @@ def add_pkg_to_req(package, version, req_dir, req_pattern):
             # read all lines at once into memory.
             # NOTE: This is not memory efficient, but requirements files are small
             # so this is good for now. Another way would be to create another file
-            # and write to it, but that seems overkill for now.
+            # and write to it, but that seems overkill for requirements files.
             data = file.readlines()
             for line_num, line in enumerate(data):
                 line = line.strip().lower()
                 if line:
+                    # first, search if the pkg already exists
                     if not line.startswith("#"):  # not a comment
-                        # first, search if the pkg already exists
                         package_, version_ = extract_pkg_version(line)
 
                         if version_ is None:
@@ -147,12 +153,14 @@ def add_pkg_to_req(package, version, req_dir, req_pattern):
                             else:
                                 click.echo("Package is already set to the latest/desired version.")
                             break
+
                     # if pkg is absent, check for the '#wopp' comment.
                     # handle empty spaces
                     if REQUIREMENTS_REPLACE_COMMENT.lower() in line.replace(' ', ''):
                         # only replace the first instance of #wopp
                         needs_append = False
-                        data[line_num] = line.replace(line, req_line + "\n")
+
+                        data[line_num] = line.replace(line, repl_str + "\n")
                         break
 
             # move pointer back to start
@@ -166,7 +174,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, 'a') as file:
-                file.write(req_line + "\n")
+                file.write("\n{}\n".format(repl_str))
 
 
 def get_query_response(
@@ -177,6 +185,7 @@ def get_query_response(
     add_to_req=False,
     req_dir=None,
     req_pattern=None,
+    comment=None,
 ):
     """
     Run query against PyPI API and then do stuff based on user options.
@@ -186,7 +195,9 @@ def get_query_response(
     :param more_out: should output should contain more detail?
     :param launch_docs: should doc URL be launched?
     :param add_to_req: should the package be added as a dependency to requirements files?
+    :param comment: comment to be added for the dependency
     :param req_dir: Directory to search for requirement files
+    :param req_pattern: Filename pattern for searching requirements files
     :return: output if available, or None
     """
     client = WoppClient(request_hooks={'response': clean_response})
@@ -206,7 +217,7 @@ def get_query_response(
 
     # add pkg as dep to requirements files if needed.
     if add_to_req:
-        add_pkg_to_req(response.name, version or response.latest_version, req_dir, req_pattern)
+        add_pkg_to_req(response.name, version or response.latest_version, req_dir, req_pattern, comment)
         return
 
     # get the output

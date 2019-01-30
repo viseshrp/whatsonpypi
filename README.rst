@@ -166,6 +166,21 @@ Features
 
     Default value (if not provided) is the directory where the command is run (cwd).
 
+    Also, optionally, you can specify comments to add before a dependency.
+    Note that the comment will not be added if the dependency already exists in the file.
+
+    For example, running this:
+
+    .. code-block:: bash
+
+        $ whatsonpypi pytest-runner --add --comment 'testing'
+
+    will add this:
+
+    .. code-block:: yaml
+
+        # testing
+        pytest-runner==4.2
 
 See all options with:
 
