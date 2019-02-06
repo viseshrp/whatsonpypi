@@ -114,7 +114,7 @@ def get_req_files(req_dir, req_pattern):
 
 def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
     req_files = get_req_files(req_dir, req_pattern)
-    req_line = "{}=={}".format(package, version)
+    req_line = "{}=={}\n".format(package, version)
 
     repl_str = ''
     if comment:
@@ -155,7 +155,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
                     if REQUIREMENTS_REPLACE_COMMENT.lower() in line.replace(' ', ''):
                         needs_append = False
 
-                        data[line_num] = line.replace(line, repl_str + "\n")
+                        data[line_num] = line.replace(line, repl_str)
                         # only replace the first instance of #wopp
                         break
 
@@ -170,7 +170,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, 'a') as file:
-                file.write("\n{}\n".format(repl_str))
+                file.write("\n{}".format(repl_str))
 
 
 def run_query(
