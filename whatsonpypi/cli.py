@@ -9,7 +9,7 @@ import click
 
 from whatsonpypi import __version__
 from .utils import pretty, extract_pkg_version
-from .whatsonpypi import get_query_response
+from .whatsonpypi import run_query
 
 
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
@@ -77,7 +77,7 @@ from .whatsonpypi import get_query_response
 )
 def main(package, more, docs, add, req_dir, req_pattern, comment):
     """
-    CLI tool to find the latest version of a package on PyPI.
+    CLI tool to get package info from PyPI and/or manipulate requirements.
 
     Example usages:
 
@@ -87,7 +87,7 @@ def main(package, more, docs, add, req_dir, req_pattern, comment):
         # get version if given
         package_, version = extract_pkg_version(package)
 
-        output = get_query_response(
+        result = run_query(
             package=package_ or package,
             version=version,
             more_out=more,
@@ -98,8 +98,8 @@ def main(package, more, docs, add, req_dir, req_pattern, comment):
             comment=comment,
         )
         # output is not always expected and might be None sometimes.
-        if output:
-            pretty(output)
+        if result:
+            pretty(result)
     except Exception as e:
         # all other exceptions
         raise click.ClickException(e)

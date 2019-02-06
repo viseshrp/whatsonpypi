@@ -18,7 +18,6 @@ from .constants import (
 from .exceptions import (
     DocsNotFoundError,
     URLLaunchError,
-    BadRequirementsFormatError,
     RequirementsFilesNotFoundError
 )
 from .param_types import MultipleChoice
@@ -141,9 +140,6 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
                     if not line.startswith("#"):  # not a comment
                         package_, version_ = extract_pkg_version(line)
 
-                        if version_ is None:
-                            raise BadRequirementsFormatError("Your requirements are not in the right format.")
-
                         if package.lower() == package_:
                             needs_append = False
                             # if yes, check the version.
@@ -157,10 +153,10 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
                     # if pkg is absent, check for the '#wopp' comment.
                     # handle empty spaces
                     if REQUIREMENTS_REPLACE_COMMENT.lower() in line.replace(' ', ''):
-                        # only replace the first instance of #wopp
                         needs_append = False
 
                         data[line_num] = line.replace(line, repl_str + "\n")
+                        # only replace the first instance of #wopp
                         break
 
             # move pointer back to start
@@ -177,7 +173,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
                 file.write("\n{}\n".format(repl_str))
 
 
-def get_query_response(
+def run_query(
     package=None,
     version=None,
     more_out=False,

@@ -18,7 +18,7 @@ whatsonpypi
         :alt: Downloads
 
 
-CLI tool to find package info on PyPI
+CLI tool to get package info from PyPI and/or manipulate requirements.
 
 
 * GitHub: https://github.com/viseshrp/whatsonpypi
