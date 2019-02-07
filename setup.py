@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 # Package meta-data.
 NAME = 'whatsonpypi'
-VERSION = '0.2.5'
+VERSION = '0.2.6'
 DESCRIPTION = "CLI tool to get package info from PyPI and/or manipulate requirements."
 AUTHOR = "Visesh Prasad"
 EMAIL = 'viseshrprasad@gmail.com'
