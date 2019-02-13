@@ -11,6 +11,8 @@ from . import __version__
 from .utils import pretty, extract_pkg_version
 from .whatsonpypi import run_query
 
+click.disable_unicode_literals_warning = True
+
 
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(__version__, '-v', '--version')
@@ -102,7 +104,7 @@ def main(package, more, docs, add, req_dir, req_pattern, comment):
             pretty(result)
     except Exception as e:
         # all other exceptions
-        raise click.ClickException(e)
+        raise click.ClickException(str(e))
 
 
 if __name__ == "__main__":
