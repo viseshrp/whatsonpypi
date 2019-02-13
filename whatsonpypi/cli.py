@@ -7,7 +7,7 @@ from __future__ import unicode_literals  # unicode support for py2
 
 import click
 
-from whatsonpypi import __version__
+from . import __version__
 from .utils import pretty, extract_pkg_version
 from .whatsonpypi import run_query
 
