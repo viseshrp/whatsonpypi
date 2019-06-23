@@ -127,7 +127,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
         needs_append = True  # should we append package to the end of file
 
         click.echo("Modifying file: {} ...".format(file_path))
-        with open(file_path, 'r+') as file:
+        with open(file_path, 'r+', encoding='utf-8') as file:
             # read all lines at once into memory.
             # NOTE: This is not memory efficient, but requirements files are small
             # so this is good for now. Another way would be to create another file
@@ -169,7 +169,7 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
         if needs_append:
             # if none of the above cases happen,
             # just append to the end of the file and done.
-            with open(file_path, 'a') as file:
+            with open(file_path, 'a', encoding='utf-8') as file:
                 file.write("\n{}".format(repl_str))
 
 
