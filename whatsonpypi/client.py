@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-
 """
 API client
 """
-from __future__ import unicode_literals  # unicode support for py2
-
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -25,69 +21,69 @@ class WoppResponse(object):
 
     @property
     def name(self):
-        return self.json.get('name')
+        return self.json.get("name")
 
     @property
     def latest_version(self):
-        return self.json.get('latest_version')
+        return self.json.get("latest_version")
 
     @property
     def summary(self):
-        return self.json.get('summary')
+        return self.json.get("summary")
 
     @property
     def homepage(self):
-        return self.json.get('homepage')
+        return self.json.get("homepage")
 
     @property
     def package_url(self):
-        return self.json.get('package_url')
+        return self.json.get("package_url")
 
     @property
     def project_urls(self):
-        return self.json.get('project_urls')
+        return self.json.get("project_urls")
 
     @property
     def project_docs(self):
-        return self.project_urls.get('Documentation') or self.homepage
+        return self.project_urls.get("Documentation") or self.homepage
 
     @property
     def requires_python(self):
-        return self.json.get('requires_python')
+        return self.json.get("requires_python")
 
     @property
     def license(self):
-        return self.json.get('license')
+        return self.json.get("license")
 
     @property
     def author(self):
-        return self.json.get('author')
+        return self.json.get("author")
 
     @property
     def author_email(self):
-        return self.json.get('author_email')
+        return self.json.get("author_email")
 
     @property
     def latest_release_url(self):
-        return self.json.get('latest_release_url')
+        return self.json.get("latest_release_url")
 
     @property
     def dependencies(self):
-        return self.json.get('dependencies')
+        return self.json.get("dependencies")
 
     @property
     def latest_pkg_urls(self):
-        return self.json.get('latest_pkg_urls')
+        return self.json.get("latest_pkg_urls")
 
     @property
     def releases(self):
         # all releases
-        return self.json.get('releases')
+        return self.json.get("releases")
 
     @property
     def releases_pkg_info(self):
         # info of every release's package
-        return self.json.get('releases_pkg_info')
+        return self.json.get("releases_pkg_info")
 
     @property
     def latest_releases(self):
@@ -119,13 +115,13 @@ class WoppClient(object):
         """
         url = self._build_url(package, version)
         req_kwargs = {
-            'method': 'GET',
-            'url': url,
-            'hooks': self.request_hooks,
-            'headers': {
-                'Accept': 'application/json',
-                'User-Agent': 'https://github.com/viseshrp/whatsonpypi',
-            }
+            "method": "GET",
+            "url": url,
+            "hooks": self.request_hooks,
+            "headers": {
+                "Accept": "application/json",
+                "User-Agent": "https://github.com/viseshrp/whatsonpypi",
+            },
         }
 
         session = self.session or Session()
@@ -141,8 +137,8 @@ class WoppClient(object):
             status_forcelist=[500, 502, 503, 504],
         )
         adapter = HTTPAdapter(max_retries=retries)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
 
         # and fire!
         response = session.send(
@@ -152,7 +148,9 @@ class WoppClient(object):
         )
 
         if response.status_code == 404:
-            raise PackageNotFoundError("Sorry, but that package/version couldn't be found on PyPI.")
+            raise PackageNotFoundError(
+                "Sorry, but that package/version couldn't be found on PyPI."
+            )
 
         # serialize response
         wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
@@ -167,7 +165,7 @@ class WoppClient(object):
         :return: fully qualified URL
         """
         if package is None:
-            raise PackageNotProvidedError('A package name is needed to proceed.')
+            raise PackageNotProvidedError("A package name is needed to proceed.")
 
         if version is not None:
             url = "{}/{}/{}/json".format(self.base_url, package, version)

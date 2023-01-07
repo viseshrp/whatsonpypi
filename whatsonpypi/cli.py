@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
 """
 Console script
 """
-from __future__ import unicode_literals  # unicode support for py2
 
 import click
 
@@ -11,71 +8,75 @@ from . import __version__
 from .utils import pretty, extract_pkg_version
 from .whatsonpypi import run_query
 
-click.disable_unicode_literals_warning = True
 
-
-@click.command(context_settings=dict(help_option_names=['-h', '--help']))
-@click.version_option(__version__, '-v', '--version')
-@click.argument('package')
+@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
+@click.version_option(__version__, "-v", "--version")
+@click.argument("package")
 @click.option(
-    '-m',
-    '--more',
+    "-m",
+    "--more",
     is_flag=True,
     required=True,
     default=False,
     show_default=True,
-    help="Flag to enable expanded output"
+    help="Flag to enable expanded output",
 )
 @click.option(
-    '-d',
-    '--docs',
+    "-d",
+    "--docs",
     is_flag=True,
     required=False,
     default=False,
-    help="Flag to open docs or homepage of project"
+    help="Flag to open docs or homepage of project",
 )
 @click.option(
-    '-a',
-    '--add',
+    "-a",
+    "--add",
     is_flag=True,
     required=False,
     default=False,
     help="Flag to enable adding of dependencies to requirement files."
-         " By default, it searches for files with names matching requirements*.txt"
-         " in the current working directory and adds the dependency to the end of the"
-         " file. If you want the dependency to be added to a specific line,"
-         " mention a comment '#wopp' on its own line which will be replaced with the dependency."
-         " Existing dependencies will be replaced with newer versions. Dependency version"
-         " by default is the latest unless specified explicitly with 'whatsonpypi package==version'."
-         " Directory to search for requirement files can be specified with --req-dir"
+    " By default, it searches for files with names matching requirements*.txt"
+    " in the current working directory and adds the dependency to the end of the"
+    " file. If you want the dependency to be added to a specific line,"
+    " mention the comment '#wopp' on its own line which will be replaced with the dependency."
+    " Existing dependencies will be replaced with newer versions. Dependency version"
+    " by default is the latest unless specified explicitly with 'whatsonpypi package==version'."
+    " Directory to search for requirement files can be specified with --req-dir",
 )
 @click.option(
-    '-r',
-    '--req-dir',
-    type=click.Path(exists=True, file_okay=False, dir_okay=True,
-                    readable=True, writable=True, resolve_path=True,
-                    allow_dash=False),
+    "-r",
+    "--req-dir",
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        readable=True,
+        writable=True,
+        resolve_path=True,
+        allow_dash=False,
+    ),
     required=False,
     default=".",
     show_default=True,
-    help="Directory to search for requirement files. Only used when --add is used."
+    help="Directory to search for requirement files. Only used when --add is used.",
 )
 @click.option(
-    '-p',
-    '--req-pattern',
+    "-p",
+    "--req-pattern",
     type=str,
     required=True,
     default="requirements*.txt",
     show_default=True,
-    help="Filename pattern for searching requirements files."
+    help="Filename pattern for searching requirements files.",
 )
 @click.option(
-    '-c',
-    '--comment',
+    "-c",
+    "--comment",
     type=str,
     required=False,
     show_default=False,
-    help="Comment to be added for the dependency when using --add."
+    help="Comment to be added for the dependency when using --add.",
 )
 def main(package, more, docs, add, req_dir, req_pattern, comment):
     """
