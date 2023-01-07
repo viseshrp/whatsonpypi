@@ -168,8 +168,8 @@ class WoppClient(object):
             raise PackageNotProvidedError("A package name is needed to proceed.")
 
         if version is not None:
-            url = "{}/{}/{}/json".format(self.base_url, package, version)
+            url = f"{self.base_url}/{package}/{version}/json"
         else:
-            url = "{}/{}/json".format(self.base_url, package)
+            url = f"{self.base_url}/{package}/json"
 
         return url

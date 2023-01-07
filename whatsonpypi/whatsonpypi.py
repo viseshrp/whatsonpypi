@@ -78,9 +78,7 @@ def get_req_files(req_dir, req_pattern):
 
     if not num_req_files:
         raise RequirementsFilesNotFoundError(
-            "No files were found matching pattern '{}' in the provided directory path :\n{}".format(
-                req_pattern, req_dir
-            )
+            f"No files were found matching pattern '{req_pattern}' in the provided directory path :\n{req_dir}"
         )
 
     # if there's only one file available, don't prompt.
@@ -90,23 +88,21 @@ def get_req_files(req_dir, req_pattern):
         # add the `all` option
 
         choice_map = collections.OrderedDict(
-            ("{}".format(i), value) for i, value in enumerate(file_choice_list, 1)
+            (f"{i}", value) for i, value in enumerate(file_choice_list, 1)
         )  # creates dict of form {'1': './requirements.txt', ...}
 
         choices = choice_map.keys()
         default_choice = "1"
 
         # build prompt
-        choice_lines = ["{} - {}".format(k, v) for k, v in choice_map.items()]
+        choice_lines = [f"{k} - {v}" for k, v in choice_map.items()]
         prompt_text = "\n".join(
             [
-                "We found {} files matching the pattern '{}'. Please choose if"
+                f"We found {num_req_files} files matching the pattern '{req_pattern}'. Please choose if"
                 " you'd like to modify just one, many or all of them. You can specify"
                 " one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
-                "'{}' means that all files will be checked and modified, which is the"
-                " default. Hit Ctrl+C to quit.".format(
-                    num_req_files, req_pattern, ALL_OPTION
-                ),
+                "'{ALL_OPTION}' means that all files will be checked and modified, which is the"
+                " default. Hit Ctrl+C to quit.",
                 "\n".join(choice_lines),
                 "Hit Enter to use the default or choose from the options",
             ]
@@ -143,19 +139,19 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
     :return:
     """
     req_files = get_req_files(req_dir, req_pattern)
-    req_line = "{}{}{}\n".format(package, REQUIREMENTS_SPEC_MAP[spec], version)
+    req_line = f"{package}{REQUIREMENTS_SPEC_MAP[spec]}{version}\n"
 
     repl_str = ""
     if comment:
         # add comment if provided.
-        repl_str += "# {}\n".format(comment)
+        repl_str += "# {comment}\n"
     repl_str += req_line
 
-    click.echo("Adding {} ...".format(req_line))
+    click.echo(f"Adding {req_line} ...")
     for file_path in req_files:
         needs_append = True  # should we append package to the end of file
 
-        click.echo("Modifying file: {} ...".format(file_path))
+        click.echo(f"Modifying file: {file_path} ...")
         with open(file_path, "r+", encoding="utf-8") as file:
             # read all lines at once into memory.
             # NOTE: This is not memory efficient, but requirements files are small
@@ -205,7 +201,7 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, "a", encoding="utf-8") as file:
-                file.write("\n{}".format(repl_str))
+                file.write(f"\n{repl_str}")
 
 
 def run_query(
