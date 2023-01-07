@@ -9,6 +9,7 @@ from .constants import (
     REQUIREMENTS_REPLACE_COMMENT,
     REQ_LINE_REGEX,
     ALL_OPTION,
+    REQUIREMENTS_SPEC_MAP,
 )
 from .exceptions import (
     DocsNotFoundError,
@@ -129,19 +130,20 @@ def get_req_files(req_dir, req_pattern):
     return req_files
 
 
-def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
+def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
     """
     Actual file operations of the req file happen here.
 
     :param package: queried package
     :param version: desired version
+    :param spec: requirements specification
     :param req_dir: dir containing the req files
     :param req_pattern: search pattern for file names
     :param comment: comment to add, if any
     :return:
     """
     req_files = get_req_files(req_dir, req_pattern)
-    req_line = "{}=={}\n".format(package, version)
+    req_line = "{}{}{}\n".format(package, REQUIREMENTS_SPEC_MAP[spec], version)
 
     repl_str = ""
     if comment:
@@ -207,14 +209,15 @@ def add_pkg_to_req(package, version, req_dir, req_pattern, comment):
 
 
 def run_query(
-    package=None,
-    version=None,
-    more_out=False,
-    launch_docs=False,
-    add_to_req=False,
-    req_dir=None,
-    req_pattern=None,
-    comment=None,
+    package,
+    version,
+    more_out,
+    launch_docs,
+    add_to_req,
+    req_dir,
+    req_pattern,
+    comment,
+    spec,
 ):
     """
     Run query against PyPI API and then do stuff based on user options.
@@ -227,6 +230,8 @@ def run_query(
     :param comment: comment to be added for the dependency
     :param req_dir: Directory to search for requirement files
     :param req_pattern: Filename pattern for searching requirements files
+    :param spec: Requirement Specifiers
+
     :return: output if available, or None
     """
     client = WoppClient(request_hooks={"response": clean_response})
@@ -251,6 +256,7 @@ def run_query(
         add_pkg_to_req(
             response.name,
             version or response.latest_version,
+            spec,
             req_dir,
             req_pattern,
             comment,

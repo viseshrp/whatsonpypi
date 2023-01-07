@@ -78,7 +78,25 @@ from .whatsonpypi import run_query
     show_default=False,
     help="Comment to be added for the dependency when using --add.",
 )
-def main(package, more, docs, add, req_dir, req_pattern, comment):
+@click.option(
+    "--ee",
+    "spec",
+    flag_value="ee",
+    default=True,
+    required=False,
+    show_default=True,
+    help="use == when adding to requirements.",
+)
+@click.option(
+    "--le", "spec", flag_value="le", help="use <= when adding to requirements."
+)
+@click.option(
+    "--ge", "spec", flag_value="ge", help="use >= when adding to requirements."
+)
+@click.option(
+    "--te", "spec", flag_value="te", help="use ~= when adding to requirements."
+)
+def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
     """
     CLI tool to get package info from PyPI and/or manipulate requirements.
 
@@ -89,16 +107,16 @@ def main(package, more, docs, add, req_dir, req_pattern, comment):
     try:
         # get version if given
         package_, version = extract_pkg_version(package)
-
         result = run_query(
-            package=package_ or package,
-            version=version,
-            more_out=more,
-            launch_docs=docs,
-            add_to_req=add,
-            req_dir=req_dir,
-            req_pattern=req_pattern,
-            comment=comment,
+            package_ or package,
+            version,
+            more,
+            docs,
+            add,
+            req_dir,
+            req_pattern,
+            comment,
+            spec,
         )
         # output is not always expected and might be None sometimes.
         if result:

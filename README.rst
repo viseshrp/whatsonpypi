@@ -19,13 +19,13 @@ Installation
 
 .. code-block:: bash
 
-    pip install -U whatsonpypi
+    $ pip install -U whatsonpypi
 
 
 Requirements
 ------------
 
-#. Python 3.7+
+Python 3.7+
 
 
 Features
@@ -136,6 +136,22 @@ Features
         pytest==4.1.1
         pytest-runner==4.2
 
+    Use requirements specifications as needed. ``==``, ``>=``, ``<=`` or ``~=`` using
+    ``--ee``, ``--ge``, ``--le`` or ``--te``. Default is ``--ee``:
+
+    .. code-block:: bash
+
+        $ whatsonpypi pytest-runner --add --ge
+
+    will produce this:
+
+    .. code-block:: yaml
+
+        # Django
+        django==2.1.5
+        # testing
+        pytest==4.1.1
+        pytest-runner>=4.2
 
     Existing dependencies will be replaced with newer versions. Dependency version
     by default is the latest unless specified explicitly like:
