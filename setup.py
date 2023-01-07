@@ -4,10 +4,7 @@ from io import open
 
 from setuptools import setup, find_packages
 
-REQUIREMENTS = [
-    "click==8.1.3",
-    "requests==2.28.1"
-]
+REQUIREMENTS = ["click==8.1.3", "requests==2.28.1"]
 
 curr_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -28,8 +25,8 @@ setup(
     version=version,
     description="CLI tool to get package info from PyPI and add to requirements.",
     long_description=get_file_text("README.rst")
-                     + "\n\n"
-                     + get_file_text("CHANGELOG.rst"),
+    + "\n\n"
+    + get_file_text("CHANGELOG.rst"),
     long_description_content_type="text/x-rst",
     author="Visesh Prasad",
     author_email="visesh@live.com",
@@ -62,7 +59,9 @@ setup(
     python_requires=">=3.7",
     keywords="whatsonpypi wopp pypi requirements virtualenv venv",
     test_suite="tests",
-    tests_require=['pytest', ],
+    tests_require=[
+        "pytest",
+    ],
     install_requires=REQUIREMENTS,
     entry_points={
         "console_scripts": [

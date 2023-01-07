@@ -79,7 +79,8 @@ def get_req_files(req_dir, req_pattern):
         raise RequirementsFilesNotFoundError(
             "No files were found matching pattern '{}' in the provided directory path :\n{}".format(
                 req_pattern, req_dir
-            ))
+            )
+        )
 
     # if there's only one file available, don't prompt.
     if num_req_files > 1:
