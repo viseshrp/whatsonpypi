@@ -161,6 +161,12 @@ Features
         $ whatsonpypi pytest-runner==4.1 --add
 
 
+    Note that you may have you to double quote it in order to prevent Bash from parsing it.
+
+    .. code-block:: bash
+
+        $ whatsonpypi "pytest-runner>=4.1" --add
+
     Optionally, directory to search for requirement files can be specified with ``--req-dir``.
     Both absolute and relative paths are allowed. Must be a directory.
 

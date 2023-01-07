@@ -2,7 +2,18 @@
 History
 =======
 
-0.3.0 (2023-01-15)
+
+0.3.2 (2023-01-07)
+------------------
+
+* Fix version and spec parsing
+
+0.3.1 (2023-01-07)
+------------------
+
+* add --le, --ge, --ee, --te for requirements
+
+0.3.0 (2023-01-06)
 ------------------
 
 * dropped Python2 support. Requires 3.7+ now.

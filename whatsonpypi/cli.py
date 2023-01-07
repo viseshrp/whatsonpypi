@@ -5,7 +5,6 @@ Console script
 import click
 
 from . import __version__
-from .constants import REQUIREMENTS_SPEC_MAP
 from .utils import pretty, parse_pkg_string
 from .whatsonpypi import run_query
 
@@ -82,20 +81,18 @@ from .whatsonpypi import run_query
 @click.option(
     "--ee",
     "spec",
-    flag_value="ee",
-    default=True,
+    flag_value="==",
     required=False,
-    show_default=True,
     help="use == when adding to requirements.",
 )
 @click.option(
-    "--le", "spec", flag_value="le", help="use <= when adding to requirements."
+    "--le", "spec", flag_value="<=", help="use <= when adding to requirements."
 )
 @click.option(
-    "--ge", "spec", flag_value="ge", help="use >= when adding to requirements."
+    "--ge", "spec", flag_value=">=", help="use >= when adding to requirements."
 )
 @click.option(
-    "--te", "spec", flag_value="te", help="use ~= when adding to requirements."
+    "--te", "spec", flag_value="~=", help="use ~= when adding to requirements."
 )
 def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
     """
@@ -108,11 +105,8 @@ def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
     try:
         # get version if given
         package_, version, spec_ = parse_pkg_string(package)
-        # override from CLI
-        if spec:
-            spec_ = REQUIREMENTS_SPEC_MAP[spec]
         result = run_query(
-            package_ or package,
+            package_ or package,  # parsed package name can be None
             version,
             more,
             docs,
@@ -120,7 +114,7 @@ def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
             req_dir,
             req_pattern,
             comment,
-            spec_,
+            spec or spec_,  # override with CLI spec if present
         )
         # output is not always expected and might be None sometimes.
         if result:

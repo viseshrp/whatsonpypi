@@ -90,7 +90,7 @@ def get_req_files(req_dir, req_pattern):
             (f"{i}", value) for i, value in enumerate(file_choice_list, 1)
         )  # creates dict of form {'1': './requirements.txt', ...}
 
-        choices = choice_map.keys()
+        choices = list(choice_map.keys())
         default_choice = "1"
 
         # build prompt
@@ -138,15 +138,9 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
     :return:
     """
     req_files = get_req_files(req_dir, req_pattern)
-    req_line = f"{package}{spec}{version}\n"
+    comment_line = f"# {comment}" if comment else ""
+    default_repl_line = f"{comment_line}\n{package}{spec or '=='}{version}"
 
-    repl_str = ""
-    if comment:
-        # add comment if provided.
-        repl_str += "# {comment}\n"
-    repl_str += req_line
-
-    click.echo(f"Adding {req_line} ...")
     for file_path in req_files:
         needs_append = True  # should we append package to the end of file
 
@@ -166,14 +160,18 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
                         # extract the line contents
                         package_, version_, spec_ = parse_pkg_string(line)
                         # compare the line contents to the queried package
-                        if package_ == package.lower():
+                        if package_ and package_.lower() == package:
                             # we found it somewhere in the file,
                             # so no need to append anymore
                             needs_append = False
                             # check if version exists or is the desired version
                             if not version or version != version_:
                                 # replace
-                                data[line_num] = re.sub(REQ_LINE_REGEX, req_line, line)
+                                data[line_num] = re.sub(
+                                    REQ_LINE_REGEX,
+                                    f"{comment_line}\n{package}{spec or spec_}{version}",
+                                    line,
+                                )
                             else:
                                 click.echo(
                                     "Package is already set to the latest/desired version."
@@ -184,8 +182,7 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
                     # handle empty spaces
                     if REQUIREMENTS_REPLACE_COMMENT.lower() in line.replace(" ", ""):
                         needs_append = False
-
-                        data[line_num] = line.replace(line, repl_str)
+                        data[line_num] = line.replace(line, default_repl_line)
                         # only replace the first instance of #wopp
                         break
 
@@ -200,7 +197,7 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
             # if none of the above cases happen,
             # just append to the end of the file and done.
             with open(file_path, "a", encoding="utf-8") as file:
-                file.write(f"\n{repl_str}")
+                file.write(f"\n{default_repl_line}")
 
 
 def run_query(
@@ -229,6 +226,7 @@ def run_query(
 
     :return: output if available, or None
     """
+    package = package.lower()
     client = WoppClient(request_hooks={"response": clean_response})
     response = client.request(package=package, version=version)
 
@@ -249,7 +247,7 @@ def run_query(
     # add pkg as dep to requirements files if needed.
     if add_to_req:
         add_pkg_to_req(
-            response.name,
+            package,
             version or response.latest_version,
             spec,
             req_dir,
