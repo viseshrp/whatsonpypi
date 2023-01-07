@@ -5,7 +5,8 @@ Console script
 import click
 
 from . import __version__
-from .utils import pretty, extract_pkg_version
+from .constants import REQUIREMENTS_SPEC_MAP
+from .utils import pretty, parse_pkg_string
 from .whatsonpypi import run_query
 
 
@@ -106,7 +107,10 @@ def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
     """
     try:
         # get version if given
-        package_, version = extract_pkg_version(package)
+        package_, version, spec_ = parse_pkg_string(package)
+        # override from CLI
+        if spec:
+            spec_ = REQUIREMENTS_SPEC_MAP[spec]
         result = run_query(
             package_ or package,
             version,
@@ -116,13 +120,12 @@ def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
             req_dir,
             req_pattern,
             comment,
-            spec,
+            spec_,
         )
         # output is not always expected and might be None sometimes.
         if result:
             pretty(result)
     except Exception as e:
-        # all other exceptions
         raise click.ClickException(str(e))
 
 

@@ -9,7 +9,6 @@ from .constants import (
     REQUIREMENTS_REPLACE_COMMENT,
     REQ_LINE_REGEX,
     ALL_OPTION,
-    REQUIREMENTS_SPEC_MAP,
 )
 from .exceptions import (
     DocsNotFoundError,
@@ -17,7 +16,7 @@ from .exceptions import (
     RequirementsFilesNotFoundError,
 )
 from .param_types import MultipleChoice
-from .utils import clean_response, extract_pkg_version
+from .utils import clean_response, parse_pkg_string
 
 
 def get_output(response, more_out=False):
@@ -139,7 +138,7 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
     :return:
     """
     req_files = get_req_files(req_dir, req_pattern)
-    req_line = f"{package}{REQUIREMENTS_SPEC_MAP[spec]}{version}\n"
+    req_line = f"{package}{spec}{version}\n"
 
     repl_str = ""
     if comment:
@@ -165,15 +164,15 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
                     # first, search if the pkg already exists
                     if not line.startswith("#"):  # not a comment
                         # extract the line contents
-                        package_, version_ = extract_pkg_version(line)
+                        package_, version_, spec_ = parse_pkg_string(line)
                         # compare the line contents to the queried package
-                        if package.lower() == package_:
+                        if package_ == package.lower():
                             # we found it somewhere in the file,
-                            # so need to append anymore
+                            # so no need to append anymore
                             needs_append = False
-                            # if yes, check if version exists or is the desired version
+                            # check if version exists or is the desired version
                             if not version or version != version_:
-                                # replace and end it.
+                                # replace
                                 data[line_num] = re.sub(REQ_LINE_REGEX, req_line, line)
                             else:
                                 click.echo(

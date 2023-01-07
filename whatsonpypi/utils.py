@@ -5,7 +5,7 @@ import click
 from .constants import REQ_LINE_REGEX
 
 
-def extract_pkg_version(in_str):
+def parse_pkg_string(in_str):
     """
     Use regex to extract package and version
 
@@ -14,16 +14,18 @@ def extract_pkg_version(in_str):
     """
     package = None
     version = None
+    spec = None
 
     try:
         reg_search = re.search(REQ_LINE_REGEX, in_str)
         if reg_search:
             package = reg_search.group(1)
-            version = reg_search.group(6)
+            spec = reg_search.group(2)
+            version = reg_search.group(7)
     except IndexError:
         pass
 
-    return package, version
+    return package, version, spec
 
 
 def pretty(input_, indent=0):
