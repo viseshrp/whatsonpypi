@@ -2,10 +2,16 @@
 History
 =======
 
+0.3.0 (2023-01-15)
+------------------
+
+* dropped Python2 support. Requires 3.7+ now.
+
 0.2.8 (2019-02-13)
 ------------------
 
 * more py2 fixes
+* use utf-8 while opening files
 
 0.2.7 (2019-02-12)
 ------------------

@@ -6,13 +6,6 @@ whatsonpypi
 .. image:: https://img.shields.io/pypi/v/whatsonpypi.svg
         :target: https://pypi.python.org/pypi/whatsonpypi
 
-.. image:: https://img.shields.io/travis/viseshrp/whatsonpypi.svg
-        :target: https://travis-ci.org/viseshrp/whatsonpypi
-
-.. image:: https://readthedocs.org/projects/whatsonpypi/badge/?version=latest
-        :target: https://whatsonpypi.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
-
 .. image:: https://pepy.tech/badge/whatsonpypi
         :target: https://pepy.tech/project/whatsonpypi
         :alt: Downloads
@@ -21,14 +14,9 @@ whatsonpypi
 CLI tool to get package info from PyPI and/or manipulate requirements.
 
 
-* GitHub: https://github.com/viseshrp/whatsonpypi
-* PyPI: https://pypi.python.org/pypi/whatsonpypi
-* Free software: MIT license
-* Documentation: https://whatsonpypi.readthedocs.io.
-
-
 Installation
 ------------
+
 .. code-block:: bash
 
     pip install -U whatsonpypi
@@ -37,7 +25,7 @@ Installation
 Requirements
 ------------
 
-#. Python 2.7+
+#. Python 3.7+
 
 
 Features
