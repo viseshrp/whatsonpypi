@@ -52,7 +52,7 @@ setup(
     url="https://github.com/viseshrp/whatsonpypi",
     project_urls={
         "Documentation": "https://github.com/viseshrp/whatsonpypi",
-        "Changelog": "https://github.com/viseshrp/whatsonpypi/blob/main/CHANGELOG.md",
+        "Changelog": "https://github.com/viseshrp/whatsonpypi/blob/main/CHANGELOG.rst",
         "Bug Tracker": "https://github.com/viseshrp/whatsonpypi/issues",
         "Source Code": "https://github.com/viseshrp/whatsonpypi",
     },
