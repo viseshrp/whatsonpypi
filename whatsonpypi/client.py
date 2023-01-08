@@ -9,7 +9,7 @@ from .constants import PYPI_BASE_URL
 from .exceptions import PackageNotProvidedError, PackageNotFoundError
 
 
-class WoppResponse(object):
+class WoppResponse:
     """
     Serializer for the response from PyPI
     """
@@ -91,7 +91,7 @@ class WoppResponse(object):
         return self.releases[:5]
 
 
-class WoppClient(object):
+class WoppClient:
     """
     Client for accessing the PyPI API
     """
