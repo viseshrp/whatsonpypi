@@ -4,7 +4,7 @@ from io import open
 
 from setuptools import setup, find_packages
 
-REQUIREMENTS = ["click==8.1.3", "requests==2.28.1"]
+REQUIREMENTS = ["click>=8.1.0", "requests>=2.28.0"]
 
 curr_dir = os.path.abspath(os.path.dirname(__file__))
 
