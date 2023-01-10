@@ -78,7 +78,6 @@ class WoppResponse:
     @property
     def releases(self):
         # all releases
-        print(self.json)
         return self.json.get("releases", [])
 
     @property
