@@ -40,15 +40,13 @@ def get_output(response, more_out=False):
         out_dict.update(
             {
                 "author_email": response.author_email,
-                "releases": ", ".join(response.releases) if response.releases else None,
+                "releases": ", ".join(response.releases),
                 "project_urls": response.project_urls,
                 "requires_python": response.requires_python,
                 "license": response.license,
                 "current_release_url": response.latest_release_url,
                 "current_package_info": response.latest_pkg_urls,
-                "dependencies": ", ".join(response.dependencies)
-                if response.dependencies
-                else None,
+                "dependencies": ", ".join(response.dependencies),
             }
         )
     else:
