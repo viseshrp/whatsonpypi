@@ -41,7 +41,7 @@ class WoppResponse:
 
     @property
     def project_urls(self):
-        return self.json.get("project_urls", {})
+        return self.json.get("project_urls", {}) or {}
 
     @property
     def project_docs(self):
@@ -69,21 +69,21 @@ class WoppResponse:
 
     @property
     def dependencies(self):
-        return self.json.get("dependencies", [])
+        return self.json.get("dependencies", []) or []
 
     @property
     def latest_pkg_urls(self):
-        return self.json.get("latest_pkg_urls", {})
+        return self.json.get("latest_pkg_urls", {}) or {}
 
     @property
     def releases(self):
         # all releases
-        return self.json.get("releases", [])
+        return self.json.get("releases", []) or []
 
     @property
     def releases_pkg_info(self):
         # info of every release's package
-        return self.json.get("releases_pkg_info", {})
+        return self.json.get("releases_pkg_info", {}) or {}
 
     @property
     def latest_releases(self):
