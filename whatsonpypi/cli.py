@@ -30,6 +30,14 @@ from .whatsonpypi import run_query
     help="Flag to open docs or homepage of project",
 )
 @click.option(
+    "-o",
+    "--page",
+    is_flag=True,
+    required=False,
+    default=False,
+    help="Flag to open PyPI page",
+)
+@click.option(
     "-a",
     "--add",
     is_flag=True,
@@ -94,7 +102,7 @@ from .whatsonpypi import run_query
 @click.option(
     "--te", "spec", flag_value="~=", help="use ~= when adding to requirements."
 )
-def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
+def main(package, more, docs, page, add, req_dir, req_pattern, comment, spec):
     """
     CLI tool to get package info from PyPI and/or manipulate requirements.
 
@@ -110,6 +118,7 @@ def main(package, more, docs, add, req_dir, req_pattern, comment, spec):
             version,
             more,
             docs,
+            page,
             add,
             req_dir,
             req_pattern,

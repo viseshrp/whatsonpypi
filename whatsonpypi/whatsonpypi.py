@@ -203,6 +203,7 @@ def run_query(
     version,
     more_out,
     launch_docs,
+    open_page,
     add_to_req,
     req_dir,
     req_pattern,
@@ -229,12 +230,15 @@ def run_query(
     response = client.request(package=package, version=version)
 
     # launch of docs url
-    if launch_docs:
-        url = response.project_docs
-        if not url:
-            raise DocsNotFoundError(
-                "Could not find any documentation or homepage URL to launch."
-            )
+    if launch_docs or open_page:
+        if launch_docs:
+            url = response.project_docs
+            if not url:
+                raise DocsNotFoundError(
+                    "Could not find any documentation or homepage URL to launch."
+                )
+        else:
+            url = response.package_url
 
         exit_status = click.launch(url)
         if exit_status:  # if 1
