@@ -86,7 +86,6 @@ def clean_response(r, *args, **kwargs):
                         "md5": pkg_url.get("digests").get("md5"),
                         "sha256": pkg_url.get("digests").get("sha256"),
                         "filename": pkg_url.get("filename"),
-                        "has_sig": pkg_url.get("has_sig"),
                         "size": pkg_url.get("size"),
                         "upload_time": pkg_url.get("upload_time"),
                         "url": pkg_url.get("url"),
@@ -97,8 +96,6 @@ def clean_response(r, *args, **kwargs):
 
     # only run hooks for 200
     if r.status_code == 200:
-        r.hook_called = True  # flag to confirm hook was called.
-
         dirty_response = r.json()
         cleaned_response = {}
 
