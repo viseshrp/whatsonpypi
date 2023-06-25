@@ -31,7 +31,7 @@ from .whatsonpypi import run_query
 )
 @click.option(
     "-o",
-    "--page",
+    "--open",
     is_flag=True,
     required=False,
     default=False,

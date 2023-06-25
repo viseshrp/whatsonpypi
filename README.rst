@@ -72,6 +72,15 @@ Features
         ...
 
 
+* Launch PyPI URL of project in a browser tab
+
+    Examples:
+
+    .. code-block:: bash
+
+        $ whatsonpypi django --open
+
+
 * Launch documentation URL of project in a browser tab
 
     Examples:
