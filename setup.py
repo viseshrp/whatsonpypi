@@ -1,8 +1,7 @@
 """The setup script."""
 import os
-from io import open
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 REQUIREMENTS = ["click>=8.1.0", "requests>=2.28.0"]
 
@@ -10,30 +9,31 @@ curr_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_file_text(file_name):
-    with open(os.path.join(curr_dir, file_name), "r", encoding="utf-8") as in_file:
+    with open(os.path.join(curr_dir, file_name), encoding="utf-8") as in_file:
         return in_file.read()
 
 
-_version = {}
-_version_file = os.path.join(curr_dir, "whatsonpypi", "__init__.py")
-with open(_version_file) as fp:
-    exec(fp.read(), _version)
-version = _version["__version__"]
+_init = {}
+_init_file = os.path.join(curr_dir, "whatsonpypi", "__init__.py")
+with open(_init_file) as fp:
+    exec(fp.read(), _init)
+name = _init["__name__"]
+author = _init["__author__"]
+email = _init["__email__"]
+version = _init["__version__"]
 
 setup(
-    name="whatsonpypi",
+    name=name,
     version=version,
     description="CLI tool to get package info from PyPI and add to requirements.",
-    long_description=get_file_text("README.rst")
-    + "\n\n"
-    + get_file_text("CHANGELOG.rst"),
-    long_description_content_type="text/x-rst",
-    author="Visesh Prasad",
-    author_email="visesh@live.com",
-    maintainer="Visesh Prasad",
-    maintainer_email="visesh@live.com",
+    long_description=get_file_text("README.md") + "\n\n" + get_file_text("CHANGELOG.md"),
+    long_description_content_type="text/markdown",
+    author=author,
+    author_email=email,
+    maintainer=author,
+    maintainer_email=email,
     license="MIT license",
-    packages=find_packages(include=["whatsonpypi"]),
+    packages=find_packages(include=["whatsonpypi"], exclude=["tests", "tests.*"]),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -47,14 +47,16 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     url="https://github.com/viseshrp/whatsonpypi",
     project_urls={
-        "Documentation": "https://github.com/viseshrp/whatsonpypi",
-        "Changelog": "https://github.com/viseshrp/whatsonpypi/blob/main/CHANGELOG.rst",
+        "Documentation": "https://github.com/viseshrp/whatsonpypi#readme",
+        "Changelog": "https://github.com/viseshrp/whatsonpypi/blob/develop/CHANGELOG.md",
         "Bug Tracker": "https://github.com/viseshrp/whatsonpypi/issues",
         "Source Code": "https://github.com/viseshrp/whatsonpypi",
+        "CI": "https://github.com/viseshrp/whatsonpypi/actions",
     },
     python_requires=">=3.7",
     keywords="whatsonpypi wopp pypi requirements virtualenv venv",
