@@ -48,9 +48,7 @@ def pretty(input_, indent=0):
         for key, value in input_.items():
             # only print if there's something
             if value:
-                click.secho(
-                    "\t" * indent + get_readable_key(str(key)), fg="green", bold=True
-                )
+                click.secho("\t" * indent + get_readable_key(str(key)), fg="green", bold=True)
                 if isinstance(value, dict):
                     pretty(value, indent + 1)
                 else:

@@ -5,7 +5,7 @@ Console script
 import click
 
 from . import __version__
-from .utils import pretty, parse_pkg_string
+from .utils import parse_pkg_string, pretty
 from .whatsonpypi import run_query
 
 
@@ -93,15 +93,9 @@ from .whatsonpypi import run_query
     required=False,
     help="use == when adding to requirements.",
 )
-@click.option(
-    "--le", "spec", flag_value="<=", help="use <= when adding to requirements."
-)
-@click.option(
-    "--ge", "spec", flag_value=">=", help="use >= when adding to requirements."
-)
-@click.option(
-    "--te", "spec", flag_value="~=", help="use ~= when adding to requirements."
-)
+@click.option("--le", "spec", flag_value="<=", help="use <= when adding to requirements.")
+@click.option("--ge", "spec", flag_value=">=", help="use >= when adding to requirements.")
+@click.option("--te", "spec", flag_value="~=", help="use ~= when adding to requirements.")
 def main(package, more, docs, page, add, req_dir, req_pattern, comment, spec):
     """
     CLI tool to get package info from PyPI and/or manipulate requirements.

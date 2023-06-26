@@ -5,16 +5,8 @@ import re
 import click
 
 from .client import WoppClient
-from .constants import (
-    REQUIREMENTS_REPLACE_COMMENT,
-    REQ_LINE_REGEX,
-    ALL_OPTION,
-)
-from .exceptions import (
-    DocsNotFoundError,
-    URLLaunchError,
-    RequirementsFilesNotFoundError,
-)
+from .constants import ALL_OPTION, REQ_LINE_REGEX, REQUIREMENTS_REPLACE_COMMENT
+from .exceptions import DocsNotFoundError, RequirementsFilesNotFoundError, URLLaunchError
 from .param_types import MultipleChoice
 from .utils import clean_response, parse_pkg_string
 
@@ -75,7 +67,8 @@ def get_req_files(req_dir, req_pattern):
 
     if not num_req_files:
         raise RequirementsFilesNotFoundError(
-            f"No files were found matching pattern '{req_pattern}' in the provided directory path :\n{req_dir}"
+            f"No files were found matching pattern '{req_pattern}' in"
+            f" the provided directory path :\n{req_dir}"
         )
 
     # if there's only one file available, don't prompt.
@@ -116,9 +109,7 @@ def get_req_files(req_dir, req_pattern):
         # if the all option is not included in the input,
         # only use the files that are needed.
         if default_choice not in req_file_ids:
-            req_files = [
-                choice_map[str(id_)] for id_ in req_file_ids if id_ != default_choice
-            ]
+            req_files = [choice_map[str(id_)] for id_ in req_file_ids if id_ != default_choice]
 
     return req_files
 
@@ -171,9 +162,7 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
                                     line,
                                 )
                             else:
-                                click.echo(
-                                    "Package is already set to the latest/desired version."
-                                )
+                                click.echo("Package is already set to the latest/desired version.")
                             break
 
                     # if pkg is absent, check for the '#wopp' comment.

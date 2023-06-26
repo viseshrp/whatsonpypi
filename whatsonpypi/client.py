@@ -6,7 +6,7 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 from .constants import PYPI_BASE_URL
-from .exceptions import PackageNotProvidedError, PackageNotFoundError
+from .exceptions import PackageNotFoundError, PackageNotProvidedError
 
 
 class WoppResponse:
@@ -148,9 +148,7 @@ class WoppClient:
         )
 
         if response.status_code == 404:
-            raise PackageNotFoundError(
-                "Sorry, but that package/version couldn't be found on PyPI."
-            )
+            raise PackageNotFoundError("Sorry, but that package/version couldn't be found on PyPI.")
 
         # serialize response
         wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)

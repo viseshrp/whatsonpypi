@@ -20,13 +20,10 @@ class MultipleChoice(click.Choice):
         valid_choice_list = []
 
         for choice in choice_list:
-            choice = (
-                choice.strip().lower()
-            )  # lower is for when we have a,b,c as options.
+            choice = choice.strip().lower()  # lower is for when we have a,b,c as options.
             if choice not in self.choices:
                 self.fail(
-                    "Invalid choice: %s (choose from %s)"
-                    % (choice, ", ".join(self.choices)),
+                    "Invalid choice: {} (choose from {})".format(choice, ", ".join(self.choices)),
                     param,
                     ctx,
                 )
