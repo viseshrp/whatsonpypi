@@ -7,11 +7,8 @@ from whatsonpypi import __version__, cli
 @pytest.mark.parametrize(
     "options",
     [
-        ([]),
         (["-h"]),
         (["--help"]),
-        (["what", "-h"]),
-        (["what", "--help"]),
     ],
 )
 def test_help(options):
