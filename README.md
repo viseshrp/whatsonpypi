@@ -10,19 +10,19 @@ whatsonpypi
 
 Get package info from PyPI. Modify your requirements files.
 
-
 Why build this
 --------------
-I find myself checking the PyPI page very frequently mostly when upgrading dependencies to get the 
-latest versions. I'm inherently lazy and did not want to get my ass off my terminal window.
 
+I find myself checking the PyPI page very frequently mostly when upgrading
+dependencies to get the latest versions. I'm inherently lazy and did not want
+to get my ass off my terminal window.
 
 How it works
 ------------
-No real magic here. It uses the `requests` package to hit the public PyPI REST API, parses the JSON 
-and displays it. There's also some basic file manipulation to modify requirements files. Embarrassingly 
-simple.
 
+No real magic here. It uses the `requests` package to hit the public PyPI
+REST API, parses the JSON and displays it. There's also some basic file
+manipulation to modify requirements files. Embarrassingly simple.
 
 Installation
 ------------
@@ -39,7 +39,7 @@ Requirements
 Features
 --------
 
--   Find information on a package on PyPI
+- Find information on a package on PyPI
 
     > Examples:
     >
@@ -50,7 +50,8 @@ Features
     > LATEST VERSION
     >     2.1.5
     > SUMMARY
-    >     A high-level Python Web framework that encourages rapid development and clean, pragmatic design.
+    >     A high-level Python Web framework that encourages
+    > rapid development and clean, pragmatic design.
     > PACKAGE URL
     >     https://pypi.org/project/Django/
     > AUTHOR
@@ -59,7 +60,7 @@ Features
     >     2.2a1, 2.1rc1, 2.1b1, 2.1a1, 2.1.5
     > ```
 
--   For more information..
+- For more information..
 
     > Examples:
     >
@@ -68,7 +69,7 @@ Features
     > ...
     > ```
 
--   Version specific information..
+- Version specific information..
 
     > Examples:
     >
@@ -77,7 +78,7 @@ Features
     > ...
     > ```
 
--   Launch PyPI URL of project in a browser tab
+- Launch PyPI URL of project in a browser tab
 
     > Examples:
     >
@@ -85,7 +86,7 @@ Features
     > $ whatsonpypi django --open
     > ```
 
--   Launch documentation URL of project in a browser tab
+- Launch documentation URL of project in a browser tab
 
     > Examples:
     >
@@ -93,7 +94,7 @@ Features
     > $ whatsonpypi django --docs
     > ```
 
--   Add packages to your requirements files.
+- Add packages to your requirements files.
 
     > Examples:
     >
