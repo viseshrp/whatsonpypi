@@ -3,8 +3,8 @@ whatsonpypi
 
 [![image](https://img.shields.io/pypi/v/whatsonpypi.svg)](https://pypi.python.org/pypi/whatsonpypi)
 [![Python versions](https://img.shields.io/pypi/pyversions/whatsonpypi.svg?logo=python&logoColor=white)](https://pypi.org/project/whatsonpypi/)
-<!--[![Tests status](https://github.com/viseshrp/whatsonpypi/workflows/Test/badge.svg)](https://github.com/viseshrp/whatsonpypi/actions?query=workflow%3ATest)-->
-<!--[![Coverage](https://codecov.io/gh/viseshrp/whatsonpypi/branch/develop/graph/badge.svg)](https://codecov.io/gh/viseshrp/whatsonpypi)-->
+[![Tests status](https://github.com/viseshrp/whatsonpypi/workflows/Test/badge.svg)](https://github.com/viseshrp/whatsonpypi/actions?query=workflow%3ATest)
+[![Coverage](https://codecov.io/gh/viseshrp/whatsonpypi/branch/develop/graph/badge.svg)](https://codecov.io/gh/viseshrp/whatsonpypi)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/viseshrp/whatsonpypi/blob/develop/LICENSE)
 [![Downloads](https://pepy.tech/badge/whatsonpypi)](https://pepy.tech/project/whatsonpypi)
 
