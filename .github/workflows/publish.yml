@@ -1,17 +1,9 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Upload Python Package
+name: Publish
 
 on:
   workflow_dispatch:
   release:
-    types: [published]
+    types: [ published ]
 
 permissions:
   contents: read
@@ -26,57 +18,42 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
-        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+        python-version: [ '3.7', '3.8', '3.9', '3.10', '3.11' ]
     runs-on: ${{ matrix.os }}
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Install build requirements
-        run: pip install -r requirements-dev.txt
-
+        run: pip install -r requirements/build.txt
       - name: Create wheel
         run: make build
-
       - name: Install
         run: make install
-
       - name: Test import
         run: make smoketest
 
   deploy:
     needs: [ smoketest ]
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.7'
-
       - name: Install build requirements
-        run: pip install -r requirements-dev.txt
-
+        run: pip install -r requirements/build.txt
       - name: Create wheel
         run: make build
-
+      - name: List directory structure
+        run: ls -R dist/*
       - name: Validate wheel
         run: twine check dist/*
-
-      # list current directory
-      - name: List directory structure
-        run: ls -R
-
       - name: Install
         run: make install
-
       - name: Upload wheel
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v3
@@ -85,9 +62,9 @@ jobs:
           path: dist/
           retention-days: 7
           if-no-files-found: error
-
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@a56da0b891b3dc519c7ee3284aff1fad93cc8598
+        if: ${{ !env.ACT }}
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
