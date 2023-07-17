@@ -205,6 +205,7 @@ def run_query(
     :param package: name of package
     :param version: version of package
     :param more_out: should output should contain more detail?
+    :param open_page: should the PyPI page be launched?
     :param launch_docs: should doc URL be launched?
     :param add_to_req: should the package be added as a dependency to requirements files?
     :param comment: comment to be added for the dependency

@@ -32,6 +32,7 @@ from .whatsonpypi import run_query
 @click.option(
     "-o",
     "--open",
+    "page",
     is_flag=True,
     required=False,
     default=False,
