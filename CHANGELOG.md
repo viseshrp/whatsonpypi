@@ -1,5 +1,13 @@
 # History
 
+## 0.4.0 (TBD)
+
+- BREAKING: use --open instead of --page to open PyPI page
+- Remove deprecated info from output
+- Fix releases output
+- Display dates for releases
+- List dependencies as a proper list
+
 ## 0.3.7 (2023-01-11)
 
 - add -o/--page to open PyPI page
