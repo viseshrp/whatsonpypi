@@ -1,0 +1,24 @@
+{
+  "template": "https://github.com/viseshrp/yapc",
+  "commit": "d566bc9f7503758ade24ff51e89eee52c757a3c5",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "author": "Visesh Prasad",
+      "email": "viseshrprasad@gmail.com",
+      "github_username": "viseshrp",
+      "pypi_username": "viseshrp",
+      "project_name": "whatsonpypi",
+      "project_slug": "whatsonpypi",
+      "project_description": "Get package info from PyPI.",
+      "cli_tool": "y",
+      "codecov": "y",
+      "git_init": "n",
+      "github_actions": "y",
+      "publish_to_pypi": "y",
+      "_template": "https://github.com/viseshrp/yapc",
+      "_commit": "d566bc9f7503758ade24ff51e89eee52c757a3c5"
+    }
+  },
+  "directory": null
+}

@@ -1,0 +1,53 @@
+name: Comment VHS GIF on PR
+
+on:
+  pull_request:
+    paths:
+      - demo.tape
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  vhs-comment:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Set Git identity
+        run: |
+          git config user.name "vhs-action 📼"
+          git config user.email "actions@github.com"
+
+      - name: Set up Python + Environment
+        uses: ./.github/actions/setup-python-env
+
+      - name: Install VHS + deps
+        run: brew install vhs
+
+      - name: Generate demo.gif
+        run: vhs demo.tape
+
+      - name: Commit demo.gif to PR branch
+        run: |
+          git add demo.gif
+          git commit -m "chore(demo): update demo.gif"
+          git push
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Comment on PR with demo.gif
+        uses: github-actions-up-and-running/pr-comment@v1.0.1
+        env:
+          IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.pull_request.head.ref }}/demo.gif
+          MESSAGE: |
+            🖼️ **VHS Preview**
+
+            Here's the updated `demo.gif` based on your changes:
+
+            ![Demo]({0})
+        with:
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          message: ${{ format(env.MESSAGE, env.IMAGE_URL) }}

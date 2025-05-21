@@ -1,19 +1,172 @@
-[build-system]
-requires = [
-    "setuptools >= 45",
-    "wheel",
-    "versioningit",
+[project]
+name = "whatsonpypi"
+dynamic = ["version"]
+description = "Get package info from PyPI."
+authors = [{ name = "Visesh Prasad", email = "viseshrprasad@gmail.com" }]
+readme = "README.md"
+keywords = [
+  "python",
+  "whatsonpypi",
+  "wopp",
+  "pypi",
+  "requirements",
+  "virtualenv",
+  "venv"
 ]
-build-backend = "setuptools.build_meta"
+requires-python = ">=3.9,<4.0"
+dependencies = [
+  "click>=8.1.1",
+  "requests>=2.28.0"
+]
+license = { text = "MIT" }
+classifiers = [
+  "Intended Audience :: Developers",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
 
-[tool.versioningit]
-vcs = { method = "git", default-tag = "0.0.0" }
-write = { file = "whatsonpypi/_version.py" }
+[project.urls]
+Homepage = "https://github.com/viseshrp/whatsonpypi"
+Repository = "https://github.com/viseshrp/whatsonpypi"
+Documentation = "https://github.com/viseshrp/whatsonpypi/blob/main/README.md"
+Changelog = "https://github.com/viseshrp/whatsonpypi/blob/develop/CHANGELOG.md"
+Bug Tracker = "https://github.com/viseshrp/whatsonpypi/issues"
+CI = "https://github.com/viseshrp/whatsonpypi/actions"
 
-[tool.versioningit.next-version]
-method = "smallest"
+[project.scripts]
+whatsonpypi = "whatsonpypi.__main__:main"
 
-[tool.versioningit.format]
-distance = "{next_version}.dev{build_date:%Y%m%d%H%M%S}"
-dirty = "{base_version}.dev{build_date:%Y%m%d%H%M%S}+dirty"
-distance-dirty = "{next_version}.dev{build_date:%Y%m%d%H%M%S}+dirty"
+[dependency-groups.dev]
+dev = [
+  "pre-commit>=4.2.0",
+  "uv>=0.6.17",
+  "tox>=4.25.0",
+  "tox-uv>=1.25.0",
+  "tox-gh-actions>=3.3.0",
+  "mypy>=1.15.0",
+  "deptry>=0.23.0",
+  "pytest>=8.3.5",
+  "pytest-cov>=6.1.1",
+  "vulture>=2.14",
+  "cogapp>=3.4.1",
+  "ipdb>=0.13.13"
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+path = "whatsonpypi/_version.py"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+version_scheme = "guess-next-dev"
+
+[tool.hatch.build.targets.wheel]
+packages = ["whatsonpypi"]
+
+[tool.hatch.build.targets.editable]
+packages = ["whatsonpypi"]
+
+[tool.uv]
+default-groups = "all"
+
+[tool.mypy]
+files = ["whatsonpypi"]
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+show_error_codes = true
+ignore_missing_imports = true
+follow_imports = "silent"
+disable_error_code = ["import-untyped"]
+
+[tool.pytest.ini_options]
+tmp_path_retention_policy = "failed"
+testpaths = ["tests"]
+addopts = "--capture=tee-sys --tb=native -p no:warnings -ra -vv"
+markers = [
+  "integration:Run integration tests",
+  "smoke:Run the smoke tests",
+  "unit:Run the unit tests"
+]
+norecursedirs = [".git", ".idea"]
+filterwarnings = ["ignore:.+:DeprecationWarning"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if self\\.debug",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "@(abc\\.)?abstractmethod"
+]
+
+[tool.coverage.run]
+branch = true
+omit = ["whatsonpypi/__main__.py"]
+source = ["whatsonpypi"]
+
+[tool.coverage.html]
+show_contexts = true
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+fix = true
+exclude = [".venv", "__init__.py"]
+
+[tool.ruff.lint]
+select = [
+  "YTT", "S", "B", "A", "C4", "T10", "SIM",
+  "I", "C90", "E", "W", "F", "PGH", "UP", "RUF", "TRY", "N"
+]
+ignore = [
+  "C901",    # function is too complex
+  "PGH003"   # blanket-type-ignore
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["whatsonpypi", "tests"]
+force-sort-within-sections = true
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.codespell]
+ignore-words = "codespell.txt"
+skip = '*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.json,*.gz,Makefile'
+quiet-level = 3
+
+[tool.bandit]
+targets = ["whatsonpypi"]
+recursive = true
+number = 3
+severity_level = "high"
+require_serial = true
+exclude_dirs = ["venv/*", ".venv/*", "tests/*"]
+
+[tool.pre-commit.default_language_versions]
+python = "3.11"
