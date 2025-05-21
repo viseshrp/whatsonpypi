@@ -17,7 +17,10 @@ repos:
     hooks:
       # Run the linter alone
       - id: ruff-check
-        args: [ --fix, --exit-non-zero-on-fix ]
+        args: [
+          --fix,
+          --exit-non-zero-on-fix
+        ]
 
   # 🧪 Typing, dependency, security checks
   - repo: https://github.com/psf/black
