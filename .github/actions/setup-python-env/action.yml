@@ -34,14 +34,6 @@ runs:
         restore-keys: |
           uv-venv-${{ inputs.python-version }}-
 
-    - name: Cache uv global cache
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: uv-cache-${{ inputs.python-version }}
-        restore-keys: |
-          uv-cache-
-
     - name: Disable pip version check (optional)
       run: echo "PIP_DISABLE_PIP_VERSION_CHECK=1" >> $GITHUB_ENV
       shell: bash
