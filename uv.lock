@@ -1341,8 +1341,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.1" },
-    { name = "requests", specifier = ">=2.28.0" },
+    { name = "click", specifier = ">=8.1.8" },
+    { name = "requests", specifier = ">=2.32.3" },
 ]
 
 [package.metadata.requires-dev]
