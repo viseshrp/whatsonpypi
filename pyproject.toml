@@ -40,9 +40,12 @@ classifiers = [
 Homepage = "https://github.com/viseshrp/whatsonpypi"
 Repository = "https://github.com/viseshrp/whatsonpypi"
 Documentation = "https://github.com/viseshrp/whatsonpypi/blob/main/README.md"
+Changelog = "https://github.com/viseshrp/whatsonpypi/blob/main/CHANGELOG.md"
+Bug-Tracker = "https://github.com/viseshrp/whatsonpypi/issues"
+CI = "https://github.com/viseshrp/whatsonpypi/actions"
 
 [project.scripts]
-whatsonpypi = "whatsonpypi.cli:main"
+whatsonpypi = "whatsonpypi.__main__:main"
 
 [dependency-groups]
 dev = [

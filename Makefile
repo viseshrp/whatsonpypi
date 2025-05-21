@@ -43,7 +43,9 @@ build: clean ## Build package using uv
 .PHONY: clean
 clean: ## Clean build artifacts
 	@echo "🚀 Removing build artifacts"
-	rm -rf dist *.egg-info build
+	rm -rf dist build *.egg-info
+	rm -rf .coverage coverage-html coverage.xml .pytest_cache
+	find . -name '*.pyc' -delete
 
 .PHONY: version
 version: ## Print the current project version
@@ -54,6 +56,11 @@ tag: ## 🏷 Tag the current release version (stripping .dev) and push
 	@echo "🏷 Creating Git tag from release version"
 	git tag v$(shell hatch version | sed 's/\.dev.*//')
 	git push origin --tags
+
+.PHONY: check-dist
+check-dist: ## Validate dist/ artifacts (long description, format)
+	@echo "🔍 Validating dist/ artifacts..."
+	uv run twine check dist/*
 
 .PHONY: publish
 publish: ## Publish to production PyPI
@@ -66,7 +73,8 @@ publish-test: ## Publish to TestPyPI (for dry runs)
 	UV_PUBLISH_TOKEN=$(TEST_PYPI_TOKEN) uv publish --publish-url=https://test.pypi.org/legacy/ --no-cache
 
 .PHONY: build-and-publish
-build-and-publish: build publish ## Build and publish in one step
+build-and-publish: build check-dist publish ## Build and publish in one step
+
 .PHONY: help
 help:
 	uv run python -c "import re; \

@@ -31,8 +31,11 @@ jobs:
       - name: Run version checks
         run: make check-version
 
-      - name: Build package
+      - name: Build project
         run: make build
+
+      - name: Check dist
+        run: make check-dist
 
       - name: Publish package to PyPI
         run: make publish

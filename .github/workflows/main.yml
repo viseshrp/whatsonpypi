@@ -87,6 +87,9 @@ jobs:
       - name: Build project
         run: make build
 
+      - name: Check dist
+        run: make check-dist
+
       - name: Publish to TestPyPI
         run: make publish-test
         env:
