@@ -5,57 +5,60 @@ description = "Get package info from PyPI."
 authors = [{ name = "Visesh Prasad", email = "viseshrprasad@gmail.com" }]
 readme = "README.md"
 keywords = [
-  "python",
-  "whatsonpypi",
-  "wopp",
-  "pypi",
-  "requirements",
-  "virtualenv",
-  "venv"
+    "python",
+    "whatsonpypi",
+    "wopp",
+    "pypi",
+    "requirements",
+    "virtualenv",
+    "venv"
 ]
 requires-python = ">=3.9,<4.0"
 dependencies = [
-  "click>=8.1.1",
-  "requests>=2.28.0"
+    "click>=8.1.1",
+    "requests>=2.28.0"
 ]
 license = { text = "MIT" }
 classifiers = [
-  "Intended Audience :: Developers",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Topic :: Software Development :: Libraries :: Python Modules"
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
 [project.urls]
 Homepage = "https://github.com/viseshrp/whatsonpypi"
 Repository = "https://github.com/viseshrp/whatsonpypi"
 Documentation = "https://github.com/viseshrp/whatsonpypi/blob/main/README.md"
-Changelog = "https://github.com/viseshrp/whatsonpypi/blob/develop/CHANGELOG.md"
-Bug Tracker = "https://github.com/viseshrp/whatsonpypi/issues"
-CI = "https://github.com/viseshrp/whatsonpypi/actions"
 
 [project.scripts]
-whatsonpypi = "whatsonpypi.__main__:main"
+whatsonpypi = "whatsonpypi.cli:main"
 
-[dependency-groups.dev]
+[dependency-groups]
 dev = [
-  "pre-commit>=4.2.0",
-  "uv>=0.6.17",
-  "tox>=4.25.0",
-  "tox-uv>=1.25.0",
-  "tox-gh-actions>=3.3.0",
-  "mypy>=1.15.0",
-  "deptry>=0.23.0",
-  "pytest>=8.3.5",
-  "pytest-cov>=6.1.1",
-  "vulture>=2.14",
-  "cogapp>=3.4.1",
-  "ipdb>=0.13.13"
+    "pre-commit>=4.2.0",
+    "uv>=0.6.17",
+    "tox>=4.25.0",
+    "tox-uv>=1.25.0",
+    "tox-gh-actions>=3.3.0",
+    "mypy>=1.15.0",
+    "deptry>=0.23.0",
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "vulture>=2.14",
+    "cogapp>=3.4.1",
+    "twine>=6.1.0",
+    "ipdb>=0.13.13",
 ]
 
 [build-system]
@@ -80,7 +83,9 @@ packages = ["whatsonpypi"]
 default-groups = "all"
 
 [tool.mypy]
-files = ["whatsonpypi"]
+files = [
+    "whatsonpypi"
+]
 disallow_untyped_defs = true
 no_implicit_optional = true
 check_untyped_defs = true
@@ -96,31 +101,45 @@ tmp_path_retention_policy = "failed"
 testpaths = ["tests"]
 addopts = "--capture=tee-sys --tb=native -p no:warnings -ra -vv"
 markers = [
-  "integration:Run integration tests",
-  "smoke:Run the smoke tests",
-  "unit:Run the unit tests"
+    "integration:Run integration tests",
+    "smoke:Run the smoke tests",
+    "unit:Run the unit tests",
 ]
-norecursedirs = [".git", ".idea"]
-filterwarnings = ["ignore:.+:DeprecationWarning"]
+norecursedirs = [
+    ".git",
+    ".idea",
+]
+filterwarnings = [
+    "ignore:.+:DeprecationWarning"
+]
 
+# Configuration for coverage.py
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
+# Regexes for lines to exclude from consideration
 exclude_lines = [
-  "pragma: no cover",
-  "def __repr__",
-  "if self\\.debug",
-  "raise AssertionError",
-  "raise NotImplementedError",
-  "if 0:",
-  "if __name__ == .__main__.:",
-  "@(abc\\.)?abstractmethod"
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
 ]
 
 [tool.coverage.run]
 branch = true
 omit = ["whatsonpypi/__main__.py"]
-source = ["whatsonpypi"]
+source = [
+    "whatsonpypi"
+]
 
 [tool.coverage.html]
 show_contexts = true
@@ -133,12 +152,42 @@ exclude = [".venv", "__init__.py"]
 
 [tool.ruff.lint]
 select = [
-  "YTT", "S", "B", "A", "C4", "T10", "SIM",
-  "I", "C90", "E", "W", "F", "PGH", "UP", "RUF", "TRY", "N"
+    # flake8-2020
+    "YTT",
+    # flake8-bandit
+    "S",
+    # flake8-bugbear
+    "B",
+    # flake8-builtins
+    "A",
+    # flake8-comprehensions
+    "C4",
+    # flake8-debugger
+    "T10",
+    # flake8-simplify
+    "SIM",
+    # isort (keep this if you want Ruff to sort imports)
+    "I",
+    # mccabe
+    "C90",
+    # pycodestyle
+    "E", "W",
+    # pep8-naming rules
+    "N",
+    # pyflakes
+    "F",
+    # pygrep-hooks
+    "PGH",
+    # pyupgrade
+    "UP",
+    # ruff-native rules
+    "RUF",
+    # try/except linting
+    "TRY",
 ]
 ignore = [
-  "C901",    # function is too complex
-  "PGH003"   # blanket-type-ignore
+    "C901", # Function is too complex
+    "PGH003" # blanket-type-ignore
 ]
 
 [tool.ruff.lint.mccabe]
@@ -147,13 +196,13 @@ max-complexity = 10
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
 
-[tool.ruff.lint.isort]
-known-first-party = ["whatsonpypi", "tests"]
-force-sort-within-sections = true
-
 [tool.black]
 line-length = 100
 target-version = ["py39"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["whatsonpypi", "tests"]
+force-sort-within-sections = true
 
 [tool.codespell]
 ignore-words = "codespell.txt"
@@ -161,7 +210,7 @@ skip = '*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.json,*.gz,Makefile'
 quiet-level = 3
 
 [tool.bandit]
-targets = ["whatsonpypi"]
+targets = ["whatsonpypi", ]
 recursive = true
 number = 3
 severity_level = "high"
@@ -169,4 +218,4 @@ require_serial = true
 exclude_dirs = ["venv/*", ".venv/*", "tests/*"]
 
 [tool.pre-commit.default_language_versions]
-python = "3.11"
+python = "3.13"
