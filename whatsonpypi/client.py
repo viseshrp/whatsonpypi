@@ -1,6 +1,7 @@
 """
 API client
 """
+
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry

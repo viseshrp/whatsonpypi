@@ -44,9 +44,9 @@ def get_output(response, more_out=False):
     else:
         out_dict.update(
             {
-                "latest_releases": ", ".join(response.latest_releases)
-                if response.latest_releases
-                else None,
+                "latest_releases": (
+                    ", ".join(response.latest_releases) if response.latest_releases else None
+                ),
             }
         )
 
