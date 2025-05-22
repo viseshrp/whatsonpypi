@@ -5,6 +5,15 @@ from typing import Any
 
 import click
 
+try:
+    from rich import box
+    from rich.console import Console
+    from rich.table import Table
+
+    _HAS_RICH = True
+except ImportError:
+    _HAS_RICH = False
+
 from .constants import REQ_LINE_REGEX
 
 
@@ -29,33 +38,51 @@ def parse_pkg_string(in_str: str) -> tuple[str | None, str | None, str | None]:
     return in_str.strip(), None, None
 
 
-def pretty(input_: Any, indent: int = 0) -> None:
+def pretty(data: dict[str, Any], indent: int = 0) -> None:
     """
-    Pretty print dictionary
+    Pretty print dictionary output.
 
-    :param input_: input
-    :param indent: number of tabs
-    :return: None
+    If `rich` is installed, renders a stylized table.
+    Otherwise falls back to plain click-based indentation output.
+
+    :param data: Dictionary to print
+    :param indent: Indentation level (used only in fallback mode)
     """
+    if _HAS_RICH:
+        console = Console()
+        table = Table(
+            title="📦 PyPI Package Info",
+            title_style="bold yellow",
+            show_header=True,
+            header_style="bold white",
+            box=box.ROUNDED,
+            show_lines=True,
+            padding=(0, 1),
+        )
 
-    def get_readable_key(key_: str) -> str:
-        # capitalize and remove _
-        if "_" in key_:
+        table.add_column("Field", style="bold magenta", no_wrap=True, justify="right", width=26)
+        table.add_column("Value", style="white", overflow="fold")
+
+        for key, value in data.items():
+            if isinstance(value, dict):
+                value = "\n".join(f"{k}: {v}" for k, v in value.items())
+            elif isinstance(value, list):
+                value = ", ".join(str(v) for v in value)
+            table.add_row(key.replace("_", " ").title(), str(value))
+
+        console.print(table)
+    else:
+        # Fallback to click-based output
+        def get_readable_key(key_: str) -> str:
             return key_.upper().replace("_", " ")
-        else:
-            return key_.upper()
 
-    if isinstance(input_, dict):
-        for key, value in input_.items():
-            # only print if there's something
+        for key, value in data.items():
             if value:
                 click.secho("\t" * indent + get_readable_key(str(key)), fg="green", bold=True)
                 if isinstance(value, dict):
                     pretty(value, indent + 1)
                 else:
                     click.echo("\t" * (indent + 1) + str(value))
-    else:
-        click.echo(input_)
 
 
 def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:

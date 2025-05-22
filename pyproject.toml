@@ -48,6 +48,9 @@ CI = "https://github.com/viseshrp/whatsonpypi/actions"
 whatsonpypi = "whatsonpypi.__main__:main"
 wopp = "whatsonpypi.__main__:main"
 
+[project.optional-dependencies]
+rich = ["rich>=13.0.0"]
+
 [dependency-groups]
 dev = [
     "pre-commit>=4.2.0",
