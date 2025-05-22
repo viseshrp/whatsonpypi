@@ -60,7 +60,7 @@ def pretty(input_: Any, indent: int = 0) -> None:
         click.echo(input_)
 
 
-def clean_response(r: Any) -> Any:
+def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     """
     Hook called after a response is received.
     Used to modify response.
