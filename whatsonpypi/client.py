@@ -1,8 +1,10 @@
 """
-API client
+API client for querying PyPI JSON endpoints.
 """
 
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import Any, Optional, Literal
 
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
@@ -14,7 +16,7 @@ from .exceptions import PackageNotFoundError, PackageNotProvidedError
 
 class WoppResponse:
     """
-    Serializer for the response from PyPI
+    A structured wrapper for PyPI JSON API responses.
     """
 
     def __init__(self, status_code: int, json: dict[str, Any]) -> None:
@@ -80,30 +82,30 @@ class WoppResponse:
 
     @property
     def releases(self) -> list[str]:
-        # all releases
         return self.json.get("releases", []) or []
 
     @property
     def releases_pkg_info(self) -> dict[str, Any]:
-        # info of every release's package
         return self.json.get("releases_pkg_info", {}) or {}
 
     @property
     def latest_releases(self) -> list[str]:
-        # last 5 releases
         return self.releases[:5]
 
 
 class WoppClient:
     """
-    Client for accessing the PyPI API
+    Synchronous client for accessing the PyPI JSON API.
     """
 
-    def __init__(self, pool_connections: bool = True, request_hooks: Any = None) -> None:
-        self.base_url = PYPI_BASE_URL
-        self.session = Session() if pool_connections else None
-        # default_hooks() returns {'response': []}
-        self.request_hooks = request_hooks or hooks.default_hooks()
+    def __init__(
+        self,
+        pool_connections: bool = True,
+        request_hooks: Optional[dict[str, list[Any]]] = None,
+    ) -> None:
+        self.base_url: str = PYPI_BASE_URL
+        self.session: Optional[Session] = Session() if pool_connections else None
+        self.request_hooks: dict[str, list[Any]] = request_hooks or hooks.default_hooks()
 
     def request(
         self,
@@ -113,13 +115,15 @@ class WoppClient:
         max_retries: int = 3,
     ) -> WoppResponse:
         """
-        Make a HTTP GET request with the provided params
+        Sends a GET request to the PyPI API and returns a structured WoppResponse.
 
-        :param timeout: request timeout seconds
-        :param max_retries: number of times to retry on failure
-        :param package: name of the python package to search
-        :param version: version of the python package to search
-        :return: response serialized by WoppResponse object
+        :param package: The package name to query
+        :param version: Optional version string
+        :param timeout: Request timeout in seconds
+        :param max_retries: Retry attempts for failed requests
+        :return: WoppResponse object with parsed data
+        :raises PackageNotProvidedError: if package is None
+        :raises PackageNotFoundError: if the PyPI API returns 404
         """
         url = self._build_url(package, version)
         req_kwargs = {
@@ -133,12 +137,9 @@ class WoppClient:
         }
 
         session = self.session or Session()
-        # instantiate Request
         request = Request(**req_kwargs)
-        # Applies session-level state such as cookies to your request
         prepared_request = session.prepare_request(request)
 
-        # use the adapter for retries
         retries = Retry(
             total=max_retries,
             backoff_factor=0.1,
@@ -148,7 +149,6 @@ class WoppClient:
         session.mount("http://", adapter)
         session.mount("https://", adapter)
 
-        # and fire!
         response = session.send(
             prepared_request,
             timeout=timeout,
@@ -158,29 +158,27 @@ class WoppClient:
         if response.status_code == 404:
             raise PackageNotFoundError
 
-        # serialize response
-        wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
-        return wopp_response
+        cleaned = response.cleaned_json  # type: ignore[attr-defined]
+        return WoppResponse(response.status_code, cleaned)
 
     def _build_url(
         self,
-        package: Optional[str] = None,
-        version: Optional[str] = None,
+        package: Optional[str],
+        version: Optional[str],
     ) -> str:
         """
-        Builds the URL with the path params provided.
+        Construct a fully qualified PyPI API URL.
 
-        :param package: name of package
-        :param version: version of package
-        :return: fully qualified URL
+        :param package: The package name
+        :param version: Optional version
+        :return: URL string
+        :raises PackageNotProvidedError: if package is None
         """
         if package is None:
             raise PackageNotProvidedError
 
-        url = (
+        return (
             f"{self.base_url}/{package}/{version}/json"
-            if version is not None
+            if version
             else f"{self.base_url}/{package}/json"
         )
-
-        return url
