@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed support for adding packages to requirements files.
 - **BREAKING**: Dropped Python 3.7 and 3.8 support.
 - **BREAKING**: Renamed `--page` to `--open` for opening the PyPI page.
+- **BREAKING**: Version specific querying only supports `==` now.
 
 ## [0.3.7] - 2023-01-11
 
