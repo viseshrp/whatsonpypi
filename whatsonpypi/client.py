@@ -4,7 +4,7 @@ API client for querying PyPI JSON endpoints.
 
 from __future__ import annotations
 
-from typing import Any, Optional, Literal
+from typing import Any
 
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
@@ -22,26 +22,26 @@ class WoppResponse:
     def __init__(self, status_code: int, json: dict[str, Any]) -> None:
         self.status_code = status_code
         self.json = json
-        self.ok = self.status_code < 400
+        self.ok = status_code < 400
 
     @property
-    def name(self) -> Optional[str]:
+    def name(self) -> str | None:
         return self.json.get("name")
 
     @property
-    def latest_version(self) -> Optional[str]:
+    def latest_version(self) -> str | None:
         return self.json.get("latest_version")
 
     @property
-    def summary(self) -> Optional[str]:
+    def summary(self) -> str | None:
         return self.json.get("summary")
 
     @property
-    def homepage(self) -> Optional[str]:
+    def homepage(self) -> str | None:
         return self.json.get("homepage")
 
     @property
-    def package_url(self) -> Optional[str]:
+    def package_url(self) -> str | None:
         return self.json.get("package_url")
 
     @property
@@ -49,27 +49,27 @@ class WoppResponse:
         return self.json.get("project_urls", {}) or {}
 
     @property
-    def project_docs(self) -> Optional[str]:
+    def project_docs(self) -> str | None:
         return self.project_urls.get("Documentation") or self.homepage
 
     @property
-    def requires_python(self) -> Optional[str]:
+    def requires_python(self) -> str | None:
         return self.json.get("requires_python")
 
     @property
-    def license(self) -> Optional[str]:
+    def license(self) -> str | None:
         return self.json.get("license")
 
     @property
-    def author(self) -> Optional[str]:
+    def author(self) -> str | None:
         return self.json.get("author")
 
     @property
-    def author_email(self) -> Optional[str]:
+    def author_email(self) -> str | None:
         return self.json.get("author_email")
 
     @property
-    def latest_release_url(self) -> Optional[str]:
+    def latest_release_url(self) -> str | None:
         return self.json.get("latest_release_url")
 
     @property
@@ -85,10 +85,6 @@ class WoppResponse:
         return self.json.get("releases", []) or []
 
     @property
-    def releases_pkg_info(self) -> dict[str, Any]:
-        return self.json.get("releases_pkg_info", {}) or {}
-
-    @property
     def latest_releases(self) -> list[str]:
         return self.releases[:5]
 
@@ -101,16 +97,16 @@ class WoppClient:
     def __init__(
         self,
         pool_connections: bool = True,
-        request_hooks: Optional[dict[str, list[Any]]] = None,
+        request_hooks: dict[str, Any] | None = None,
     ) -> None:
         self.base_url: str = PYPI_BASE_URL
-        self.session: Optional[Session] = Session() if pool_connections else None
+        self.session: Session | None = Session() if pool_connections else None
         self.request_hooks: dict[str, list[Any]] = request_hooks or hooks.default_hooks()
 
     def request(
         self,
-        package: Optional[str] = None,
-        version: Optional[str] = None,
+        package: str | None = None,
+        version: str | None = None,
         timeout: float = 3.1,
         max_retries: int = 3,
     ) -> WoppResponse:
@@ -158,13 +154,13 @@ class WoppClient:
         if response.status_code == 404:
             raise PackageNotFoundError
 
-        cleaned = response.cleaned_json  # type: ignore[attr-defined]
+        cleaned = response.cleaned_json
         return WoppResponse(response.status_code, cleaned)
 
     def _build_url(
         self,
-        package: Optional[str],
-        version: Optional[str],
+        package: str | None,
+        version: str | None,
     ) -> str:
         """
         Construct a fully qualified PyPI API URL.
