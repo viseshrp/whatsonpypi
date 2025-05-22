@@ -10,22 +10,23 @@ from .constants import REQ_LINE_REGEX
 
 def parse_pkg_string(in_str: str) -> tuple[str | None, str | None, str | None]:
     """
-    Use regex to extract package name and version when given in 'package==version' format.
-    Only '==' specifier is supported.
+    Extract package name and pinned version from a string using the '==' specifier.
 
-    :param in_str: input string from CLI (e.g. 'requests==2.31.0' or 'requests')
-    :return: tuple of (package name, version string, specifier), or original string if not matched
+    Only supports 'package==version' format. If no version is given, returns the package name alone.
+
+    :param in_str: Raw input string (e.g. 'requests==2.31.0' or 'requests')
+    :return: A tuple of (package name, version, specifier), or (name, None, None) if not matched
     """
     match = re.match(REQ_LINE_REGEX, in_str.strip())
-
     if match:
-        package = match.group(1)
-        version = match.group(2)
-        spec = "=="
-        return package, version, spec
+        return (
+            match.group("package"),
+            match.group("version"),
+            "==",
+        )
 
-    # fallback for bare package name with no version
-    return in_str, None, None
+    # No version match — treat input as just the package name
+    return in_str.strip(), None, None
 
 
 def pretty(input_: Any, indent: int = 0) -> None:
