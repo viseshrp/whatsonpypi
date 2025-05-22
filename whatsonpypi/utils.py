@@ -53,15 +53,15 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
         table = Table(
             title="📦 PyPI Package Info",
             title_style="bold yellow",
-            show_header=True,
-            header_style="bold white",
+            show_header=False,  # hide the column headers
+            show_lines=True,  # enable row lines
             box=box.ROUNDED,
-            show_lines=True,
             padding=(0, 1),
         )
 
-        table.add_column("Field", style="bold magenta", no_wrap=True, justify="right", width=26)
-        table.add_column("Value", style="white", overflow="fold")
+        # Define columns without headers (no name arguments here!)
+        table.add_column(justify="right", style="bold magenta", no_wrap=True, width=26)
+        table.add_column(style="white", overflow="fold")
 
         for key, value in data.items():
             if isinstance(value, dict):
