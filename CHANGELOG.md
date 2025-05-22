@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix releases output
 - Display dates for releases
 - List dependencies as a proper list
+- Drop Python 3.7 and 3.8 support.
+- Modernize the codebase
 
 ## 0.3.7 (2023-01-11)
 
