@@ -1,43 +1,31 @@
-whatsonpypi
-===========
+# whatsonpypi
 
-[![image](https://img.shields.io/pypi/v/whatsonpypi.svg)](https://pypi.python.org/pypi/whatsonpypi)
+[![PyPI version](https://img.shields.io/pypi/v/whatsonpypi.svg)](https://pypi.org/project/whatsonpypi/)
 [![Python versions](https://img.shields.io/pypi/pyversions/whatsonpypi.svg?logo=python&logoColor=white)](https://pypi.org/project/whatsonpypi/)
-[![Tests status](https://github.com/viseshrp/whatsonpypi/workflows/Test/badge.svg)](https://github.com/viseshrp/whatsonpypi/actions?query=workflow%3ATest)
-[![Coverage](https://codecov.io/gh/viseshrp/whatsonpypi/branch/develop/graph/badge.svg)](https://codecov.io/gh/viseshrp/whatsonpypi)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/viseshrp/whatsonpypi/blob/develop/LICENSE)
-[![Downloads](https://pepy.tech/badge/whatsonpypi)](https://pepy.tech/project/whatsonpypi)
+[![CI](https://github.com/viseshrp/whatsonpypi/actions/workflows/main.yml/badge.svg)](https://github.com/viseshrp/whatsonpypi/actions/workflows/main.yml)
+[![Coverage](https://codecov.io/gh/viseshrp/whatsonpypi/branch/main/graph/badge.svg)](https://codecov.io/gh/viseshrp/whatsonpypi)
+[![License: MIT](https://img.shields.io/github/license/viseshrp/whatsonpypi)](https://github.com/viseshrp/whatsonpypi/blob/main/LICENSE)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/en/stable/)
+[![Lint: Ruff](https://img.shields.io/badge/lint-ruff-000000.svg)](https://docs.astral.sh/ruff/)
+[![Typing: mypy](https://img.shields.io/badge/typing-checked-blue.svg)](https://mypy.readthedocs.io/en/stable/)
 
-Get package info from PyPI. Modify your requirements files.
+> Get package info from PyPI.
 
-Why build this
---------------
+![Demo](https://raw.githubusercontent.com/viseshrp/whatsonpypi/main/demo.gif)
+
+## 🚀 Why this project exists
 
 I find myself checking the PyPI page very frequently mostly when upgrading
 dependencies to get the latest versions. I'm inherently lazy and did not want
 to get my ass off my terminal window.
 
-How it works
-------------
+## 🧠 How this project works
 
 No real magic here. It uses the `requests` package to hit the public PyPI
 REST API, parses the JSON and displays it. There's also some basic file
 manipulation to modify requirements files. Embarrassingly simple.
 
-Installation
-------------
-
-``` {.bash}
-pip install whatsonpypi
-```
-
-Requirements
-------------
-
-- Python 3.7+
-
-Features
---------
+## 🛠️ Features
 
 - Find information on a package on PyPI
 
@@ -94,122 +82,13 @@ Features
     > $ whatsonpypi django --docs
     > ```
 
-- Add packages to your requirements files.
+## 📦 Installation
 
-    > Examples:
-    >
-    > ``` bash
-    > $ whatsonpypi django --add
-    > ```
-    >
-    > By default, it searches for files with names matching
-    > `requirements*.txt` in the current working directory and adds the
-    > dependency to the end of the file.
-    >
-    > You can change the filename pattern to search for. The pattern may
-    > contain simple shell-style wildcards.
-    >
-    > ``` bash
-    > $ whatsonpypi django --add --req-pattern "*.txt"
-    > ```
-    >
-    > **If there\'s more than one file**, you will see a prompt allowing
-    > you to select the files that should be modified.
-    >
-    > If you want the dependency to be added to a specific line, mention
-    > a comment `#wopp` on its own line, which will be replaced with the
-    > dependency:
-    >
-    > Example:
-    >
-    > Do this in your requirements.txt:
-    >
-    > ``` yaml
-    > # Django
-    > django==2.1.5
-    > # testing
-    > pytest==4.1.1
-    > #wopp
-    > ```
-    >
-    > Then running this:
-    >
-    > ``` bash
-    > $ whatsonpypi pytest-runner --add
-    > ```
-    >
-    > will produce this:
-    >
-    > ``` yaml
-    > # Django
-    > django==2.1.5
-    > # testing
-    > pytest==4.1.1
-    > pytest-runner==4.2
-    > ```
-    >
-    > Use requirements specifications as needed. `==`, `>=`, `<=` or
-    > `~=` using `--ee`, `--ge`, `--le` or `--te`. Default is `--ee`:
-    >
-    > ``` bash
-    > $ whatsonpypi pytest-runner --add --ge
-    > ```
-    >
-    > will produce this:
-    >
-    > ``` yaml
-    > # Django
-    > django==2.1.5
-    > # testing
-    > pytest==4.1.1
-    > pytest-runner>=4.2
-    > ```
-    >
-    > Existing dependencies will be replaced with newer versions.
-    > Dependency version by default is the latest unless specified
-    > explicitly like:
-    >
-    > ``` bash
-    > $ whatsonpypi pytest-runner==4.1 --add
-    > ```
-    >
-    > Note that you may have you to double quote it in order to prevent
-    > Bash from parsing it.
-    >
-    > ``` bash
-    > $ whatsonpypi "pytest-runner>=4.1" --add
-    > ```
-    >
-    > Optionally, directory to search for requirement files can be
-    > specified with `--req-dir`. Both absolute and relative paths are
-    > allowed. Must be a directory.
-    >
-    > ``` bash
-    > $ whatsonpypi pytest-runner==4.1 --add --req-dir /Users/Me/Documents/GitHub/project/requirements
-    > ```
-    >
-    > Default value (if not provided) is the directory where the command
-    > is run (cwd).
-    >
-    > Also, optionally, you can specify comments to add before a
-    > dependency. Note that the comment will not be added if the
-    > dependency already exists in the file.
-    >
-    > For example, running this:
-    >
-    > ``` bash
-    > $ whatsonpypi pytest-runner --add --comment 'testing'
-    > ```
-    >
-    > will add this:
-    >
-    > ``` yaml
-    > # testing
-    > pytest-runner==4.2
-    > ```
+```bash
+pip install whatsonpypi
+```
 
-Usage
------
+## 🧪 Usage
 
 <!-- [[[cog
 import cog
@@ -267,10 +146,19 @@ Options:
 ```
 <!-- [[[end]]] -->
 
-Credits
--------
+## 📐 Requirements
 
-- [Click](https://click.palletsprojects.com), for making writing CLI
-    tools a complete pleasure.
-- [Simon Willison](https://github.com/simonw/sqlite-utils/) for some
-    inspiration.
+* Python >= 3.9
+
+## 🧾 Changelog
+
+See [CHANGELOG.md](https://github.com/viseshrp/whatsonpypi/blob/main/CHANGELOG.md)
+
+## 🙏 Credits
+
+* [Click](https://click.palletsprojects.com), for enabling delightful CLI development.
+* Inspired by [Simon Willison](https://github.com/simonw)'s work.
+
+## 📄 License
+
+MIT © [Visesh Prasad](https://github.com/viseshrp)

@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 import click
 
 
@@ -8,9 +12,11 @@ class MultipleChoice(click.Choice):
     and converts them into a list
     """
 
-    name = "Multiple Choice Param Type"
+    name: str = "Multiple Choice Param Type"
 
-    def convert(self, value, param, ctx):
+    def convert(
+        self, value: Any, param: click.Parameter | None, ctx: click.Context | None
+    ) -> list[str]:
         cleaned_value = value.strip()
 
         if cleaned_value in self.choices:

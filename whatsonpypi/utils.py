@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import re
+from typing import Any
 
 import click
 
 from .constants import REQ_LINE_REGEX
 
 
-def parse_pkg_string(in_str):
+def parse_pkg_string(in_str: str) -> tuple[str | None, str | None, str | None]:
     """
     Use regex to extract package and version
 
@@ -28,7 +31,7 @@ def parse_pkg_string(in_str):
     return package, version, spec
 
 
-def pretty(input_, indent=0):
+def pretty(input_: Any, indent: int = 0) -> None:
     """
     Pretty print dictionary
 
@@ -37,7 +40,7 @@ def pretty(input_, indent=0):
     :return: None
     """
 
-    def get_readable_key(key_):
+    def get_readable_key(key_: str) -> str:
         # capitalize and remove _
         if "_" in key_:
             return key_.upper().replace("_", " ")
@@ -57,39 +60,37 @@ def pretty(input_, indent=0):
         click.echo(input_)
 
 
-def clean_response(r, *args, **kwargs):
+def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     """
     Hook called after a response is received.
     Used to modify response.
 
     :param r: requests.models.Response object
-    :param args:
-    :param kwargs:
     :return: modified Response object
     """
 
-    def convert_pkg_info(pkg_url_list):
+    def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
         """
         Converts a list of package info dicts
         into a dict, where the key is the type
         of package.. eg: sdist
+
         :param pkg_url_list:
         :return: dict
         """
-        package_urls = {}
+        package_urls: dict[str, dict[str, Any]] = {}
         for pkg_url in pkg_url_list:
-            package_urls.update(
-                {
-                    pkg_url.get("packagetype"): {
-                        "md5": pkg_url.get("digests").get("md5"),
-                        "sha256": pkg_url.get("digests").get("sha256"),
-                        "filename": pkg_url.get("filename"),
-                        "size": pkg_url.get("size"),
-                        "upload_time": pkg_url.get("upload_time"),
-                        "url": pkg_url.get("url"),
-                    }
+            key = pkg_url.get("packagetype")
+            if key is not None:
+                digests = pkg_url.get("digests") or {}
+                package_urls[key] = {
+                    "md5": digests.get("md5"),
+                    "sha256": digests.get("sha256"),
+                    "filename": pkg_url.get("filename"),
+                    "size": pkg_url.get("size"),
+                    "upload_time": pkg_url.get("upload_time"),
+                    "url": pkg_url.get("url"),
                 }
-            )
         return package_urls
 
     # only run hooks for 200

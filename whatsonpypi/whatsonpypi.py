@@ -1,17 +1,25 @@
+from __future__ import annotations
+
 import collections
 import glob
 import re
+from typing import Any
 
 import click
 
 from .client import WoppClient
 from .constants import ALL_OPTION, REQ_LINE_REGEX, REQUIREMENTS_REPLACE_COMMENT
-from .exceptions import DocsNotFoundError, RequirementsFilesNotFoundError, URLLaunchError
+from .exceptions import (
+    DocsNotFoundError,
+    PageNotFoundError,
+    RequirementsFilesNotFoundError,
+    URLLaunchError,
+)
 from .param_types import MultipleChoice
 from .utils import clean_response, parse_pkg_string
 
 
-def get_output(response, more_out=False):
+def get_output(response: Any, more_out: bool = False) -> dict[str, Any]:
     """
     Returns final output to display
 
@@ -44,16 +52,16 @@ def get_output(response, more_out=False):
     else:
         out_dict.update(
             {
-                "latest_releases": ", ".join(response.latest_releases)
-                if response.latest_releases
-                else None,
+                "latest_releases": (
+                    ", ".join(response.latest_releases) if response.latest_releases else None
+                ),
             }
         )
 
     return out_dict
 
 
-def get_req_files(req_dir, req_pattern):
+def get_req_files(req_dir: str, req_pattern: str) -> list[str]:
     """
     Get the list of requirements files in the desired dir.
 
@@ -66,10 +74,7 @@ def get_req_files(req_dir, req_pattern):
     num_req_files = len(req_files)
 
     if not num_req_files:
-        raise RequirementsFilesNotFoundError(
-            f"No files were found matching pattern '{req_pattern}' in"
-            f" the provided directory path :\n{req_dir}"
-        )
+        raise RequirementsFilesNotFoundError(req_pattern, req_dir)
 
     # if there's only one file available, don't prompt.
     if num_req_files > 1:
@@ -88,9 +93,9 @@ def get_req_files(req_dir, req_pattern):
         choice_lines = [f"{k} - {v}" for k, v in choice_map.items()]
         prompt_text = "\n".join(
             [
-                f"We found {num_req_files} files matching the pattern '{req_pattern}'. Please choose if"
-                " you'd like to modify just one, many or all of them. You can specify"
-                " one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
+                f"We found {num_req_files} files matching the pattern '{req_pattern}'. "
+                f"Please choose if you'd like to modify just one, many or all of them. "
+                f"You can specify one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
                 "'{ALL_OPTION}' means that all files will be checked and modified, which is the"
                 " default. Hit Ctrl+C to quit.",
                 "\n".join(choice_lines),
@@ -114,7 +119,14 @@ def get_req_files(req_dir, req_pattern):
     return req_files
 
 
-def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
+def add_pkg_to_req(
+    package: str,
+    version: str | None,
+    spec: str | None,
+    req_dir: str,
+    req_pattern: str,
+    comment: str | None,
+) -> None:
     """
     Actual file operations of the req file happen here.
 
@@ -188,23 +200,24 @@ def add_pkg_to_req(package, version, spec, req_dir, req_pattern, comment):
 
 
 def run_query(
-    package,
-    version,
-    more_out,
-    launch_docs,
-    open_page,
-    add_to_req,
-    req_dir,
-    req_pattern,
-    comment,
-    spec,
-):
+    package: str,
+    version: str | None,
+    more_out: bool,
+    launch_docs: bool,
+    open_page: bool,
+    add_to_req: bool,
+    req_dir: str,
+    req_pattern: str,
+    comment: str | None,
+    spec: str | None,
+) -> dict[str, Any] | None:
     """
     Run query against PyPI API and then do stuff based on user options.
 
     :param package: name of package
     :param version: version of package
     :param more_out: should output should contain more detail?
+    :param open_page: should the PyPI page be launched?
     :param launch_docs: should doc URL be launched?
     :param add_to_req: should the package be added as a dependency to requirements files?
     :param comment: comment to be added for the dependency
@@ -223,17 +236,17 @@ def run_query(
         if launch_docs:
             url = response.project_docs
             if not url:
-                raise DocsNotFoundError(
-                    "Could not find any documentation or homepage URL to launch."
-                )
+                raise DocsNotFoundError
         else:
             url = response.package_url
+            if not url:
+                raise PageNotFoundError
 
         exit_status = click.launch(url)
-        if exit_status:  # if 1
-            raise URLLaunchError("There was a problem opening the URL in your browser.")
+        if exit_status:
+            raise URLLaunchError
 
-        return
+        return None
 
     # add pkg as dep to requirements files if needed.
     if add_to_req:
@@ -245,7 +258,7 @@ def run_query(
             req_pattern,
             comment,
         )
-        return
+        return None
 
     # get the output
     out_dict = get_output(response, more_out=more_out)

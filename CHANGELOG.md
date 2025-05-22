@@ -1,4 +1,37 @@
-# History
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+-
+
+### Fixed
+
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+## 0.4.0 (TBD)
+
+- BREAKING: use --open instead of --page to open PyPI page
+- Remove deprecated info from output
+- Fix releases output
+- Display dates for releases
+- List dependencies as a proper list
+- Drop Python 3.7 and 3.8 support.
+- Modernize the codebase
 
 ## 0.3.7 (2023-01-11)
 
