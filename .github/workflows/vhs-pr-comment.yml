@@ -10,7 +10,30 @@ permissions:
   pull-requests: write
 
 jobs:
+  check_demo_tape:
+    name: Check if demo.tape changed
+    runs-on: ubuntu-latest
+    outputs:
+      demo_changed: ${{ steps.detect.outputs.changed }}
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes to demo.tape
+        id: detect
+        run: |
+          if git diff --name-only $(git rev-parse HEAD^1) HEAD | grep -q "^demo\.tape$"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
   vhs-comment:
+    name: Generate and Comment demo.gif
+    needs: check_demo_tape
+    if: ${{ needs.check_demo_tape.outputs.demo_changed == 'true' }}
     runs-on: macos-latest
     steps:
       - name: Checkout PR branch
@@ -18,14 +41,7 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 2
-
-      - name: Exit if demo.tape not changed
-        run: |
-          if ! git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^demo\.tape$"; then
-            echo "No change to demo.tape detected. Skipping workflow."
-            exit 0
-          fi
+          fetch-depth: 0
 
       - name: Set Git identity
         run: |
