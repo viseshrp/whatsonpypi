@@ -18,6 +18,7 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 2
 
       - name: Exit if demo.tape not changed
         run: |
