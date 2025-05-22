@@ -93,9 +93,9 @@ def get_req_files(req_dir: str, req_pattern: str) -> list[str]:
         choice_lines = [f"{k} - {v}" for k, v in choice_map.items()]
         prompt_text = "\n".join(
             [
-                f"We found {num_req_files} files matching the pattern '{req_pattern}'. Please choose if"
-                " you'd like to modify just one, many or all of them. You can specify"
-                " one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
+                f"We found {num_req_files} files matching the pattern '{req_pattern}'. "
+                f"Please choose if you'd like to modify just one, many or all of them. "
+                f"You can specify one or multiple options with a comma.. \nExamples:\n1,2,3\n1\n"
                 "'{ALL_OPTION}' means that all files will be checked and modified, which is the"
                 " default. Hit Ctrl+C to quit.",
                 "\n".join(choice_lines),
