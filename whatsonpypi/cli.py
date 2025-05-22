@@ -2,6 +2,8 @@
 Console script
 """
 
+from __future__ import annotations
+
 import click
 
 from . import __version__
@@ -9,7 +11,7 @@ from .utils import parse_pkg_string, pretty
 from .whatsonpypi import run_query
 
 
-@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(__version__, "-v", "--version")
 @click.argument("package")
 @click.option(
@@ -97,7 +99,17 @@ from .whatsonpypi import run_query
 @click.option("--le", "spec", flag_value="<=", help="use <= when adding to requirements.")
 @click.option("--ge", "spec", flag_value=">=", help="use >= when adding to requirements.")
 @click.option("--te", "spec", flag_value="~=", help="use ~= when adding to requirements.")
-def main(package, more, docs, page, add, req_dir, req_pattern, comment, spec):
+def main(
+    package: str,
+    more: bool,
+    docs: bool,
+    page: bool,
+    add: bool,
+    req_dir: str,
+    req_pattern: str,
+    comment: str | None,
+    spec: str | None,
+) -> None:
     """
     CLI tool to get package info from PyPI and/or manipulate requirements.
 
@@ -124,7 +136,7 @@ def main(package, more, docs, page, add, req_dir, req_pattern, comment, spec):
         if result:
             pretty(result)
     except Exception as e:
-        raise click.ClickException(str(e))
+        raise click.ClickException(str(e)) from e
 
 
 if __name__ == "__main__":
