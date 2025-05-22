@@ -17,6 +17,27 @@ Sleep 2s
 Enter
 Sleep 6s
 
+Hide
+Type "clear"
+Enter
+Show
+
+Type "whatsonpypi django"
+Sleep 2s
+Enter
+Sleep 6s
+
+
+Hide
+Type "clear"
+Enter
+Show
+
+Type "whatsonpypi django --more"
+Sleep 2s
+Enter
+Sleep 6s
+
 
 Hide
 Type "clear"
