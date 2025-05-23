@@ -38,7 +38,7 @@ def format_key(key_: str) -> str:
     return key_.upper().replace("_", " ")
 
 
-def pretty(data: list | dict[str, Any], indent: int = 0) -> None:
+def pretty(data: dict[str, Any], indent: int = 0) -> None:
     """
     Pretty print dictionary output.
 
