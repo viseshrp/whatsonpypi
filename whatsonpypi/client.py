@@ -137,7 +137,8 @@ class WoppResponse:
                 reverse=True,
             )
             self._cache["sorted_releases"] = [ver for ver, _ in sorted_releases]
-        return self._cache["sorted_releases"]
+        sorted_versions: list[str] = self._cache["sorted_releases"]
+        return sorted_versions
 
     def get_latest_releases(self, n: int = 20) -> list[str]:
         """

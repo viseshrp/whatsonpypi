@@ -8,6 +8,7 @@ import click
 try:
     from rich import box
     from rich.console import Console
+    from rich.panel import Panel
     from rich.table import Table
 
     _HAS_RICH: bool = True
@@ -48,28 +49,42 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
     :param indent: Indentation level (used only in fallback mode)
     """
     if _HAS_RICH:
+
+        def render_table(input_dict: dict[str, Any]) -> Table:
+            table = Table(
+                show_header=False,
+                show_lines=True,
+                box=box.ROUNDED,
+                padding=(0, 1),
+            )
+            table.add_column(justify="right", style="bold magenta", width=26, no_wrap=True)
+            table.add_column(style="white", overflow="fold")
+
+            for key, value in input_dict.items():
+                if value is None or value == "":
+                    continue
+                key_label = format_key(str(key))
+                if isinstance(value, dict):
+                    nested_table = render_table(value)
+                    table.add_row(key_label, nested_table)
+                elif isinstance(value, list):
+                    # Render as multiline value
+                    nested = "\n".join(str(item) for item in value)
+                    table.add_row(key_label, nested)
+                else:
+                    table.add_row(key_label, str(value))
+            return table
+
         console = Console()
-        table = Table(
-            title="📦 PyPI Package Info",
-            title_style="bold yellow",
-            show_header=False,
-            show_lines=True,
-            box=box.ROUNDED,
-            padding=(0, 1),
+        main_table = render_table(data)
+        console.print(
+            Panel(
+                main_table,
+                title="📦 PyPI Package Info",
+                title_align="center",
+                border_style="yellow",
+            )
         )
-
-        # Define columns without headers (no name arguments here!)
-        table.add_column(justify="right", style="bold magenta", no_wrap=True, width=26)
-        table.add_column(style="white", overflow="fold")
-
-        for key, value in data.items():
-            if isinstance(value, dict):
-                value = "\n".join(f"{k}: {v}" for k, v in value.items())
-            elif isinstance(value, list):
-                value = ", ".join(str(v) for v in value)
-            table.add_row(key.replace("_", " ").title(), str(value))
-
-        console.print(table)
     else:
         for key, value in data.items():
             if value:
@@ -80,7 +95,7 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
                     click.echo("\t" * (indent + 1) + str(value))
 
 
-def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+def filter_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     """
     Converts a list of package info dicts into a dict keyed by packagetype.
     """
@@ -137,9 +152,7 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     releases = dirty.get("releases")
     if releases:
         release_list = list(releases.keys())
-        release_info = {
-            version: convert_pkg_info(files) for version, files in releases.items() if files
-        }
+        release_info = {version: filter_info(files) for version, files in releases.items() if files}
         clean.update(
             {
                 "releases": release_list,
@@ -149,7 +162,7 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
 
     urls = dirty.get("urls")
     if urls:
-        clean["latest_pkg_urls"] = convert_pkg_info(urls)
+        clean["latest_pkg_urls"] = filter_info(urls)
 
     r.cleaned_json = clean
     return r
