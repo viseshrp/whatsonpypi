@@ -191,6 +191,8 @@ select = [
     "RUF",
     # try/except linting
     "TRY",
+    # Disallow print statements
+    "T201",
 ]
 ignore = [
     "C901", # Function is too complex
