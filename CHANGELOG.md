@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed display of release information.
 - List dependencies as a proper list.
+- Improved output formatting.
 
 ### Changed
 
