@@ -43,7 +43,7 @@ class DocsNotFoundError(WoppError):
 
 
 class PageNotFoundError(WoppError):
-    """Raised when a package does not have the PyPI url info."""
+    """Raised when a package does not have the PyPI URL info."""
 
     detail: str = "Could not find the URL to launch."
 
