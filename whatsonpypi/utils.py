@@ -98,7 +98,7 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
         """
         Converts a list of package info dicts
         into a dict, where the key is the type
-        of package.. eg: sdist
+        of package. eg: sdist
 
         :param pkg_url_list:
         :return: dict
@@ -119,54 +119,56 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
         return package_urls
 
     # only run hooks for 200
-    if r.status_code == 200:
-        dirty_response = r.json()
-        cleaned_response = {}
+    if r.status_code != 200:
+        return r
 
-        info = dirty_response.get("info")
-        if info:
-            cleaned_response = {
-                "name": info.get("name"),
-                "latest_version": info.get("version"),
-                "summary": info.get("summary"),
-                "homepage": info.get("home_page"),
-                "package_url": info.get("project_url") or info.get("package_url"),
-                "author": info.get("author"),
-                "project_urls": info.get("project_urls"),
-                "requires_python": info.get("requires_python"),
-                "license": info.get("license"),
-                "author_email": info.get("author_email"),
-                "latest_release_url": info.get("release_url"),
-                "dependencies": info.get("requires_dist"),
+    dirty_response = r.json()
+    cleaned_response = {}
+
+    info = dirty_response.get("info")
+    if info:
+        cleaned_response = {
+            "name": info.get("name"),
+            "latest_version": info.get("version"),
+            "summary": info.get("summary"),
+            "homepage": info.get("home_page"),
+            "package_url": info.get("project_url") or info.get("package_url"),
+            "author": info.get("author"),
+            "project_urls": info.get("project_urls"),
+            "requires_python": info.get("requires_python"),
+            "license": info.get("license"),
+            "author_email": info.get("author_email"),
+            "latest_release_url": info.get("release_url"),
+            "dependencies": info.get("requires_dist"),
+        }
+
+    # release list
+    releases = dirty_response.get("releases")
+    if releases:
+        release_list = list(releases.keys())
+        release_list.reverse()
+
+        # more detailed info of every release's package
+        releases_info = {}
+        for key, val in releases.items():
+            if val:
+                releases_info[key] = convert_pkg_info(val)
+
+        cleaned_response.update(
+            {
+                "releases": release_list,
+                "releases_pkg_info": releases_info,
             }
+        )
 
-        # release list
-        releases = dirty_response.get("releases")
-        if releases:
-            release_list = list(releases.keys())
-            release_list.reverse()
+    # latest release's package information
+    latest_pkg_urls = dirty_response.get("urls")
+    if latest_pkg_urls:
+        cleaned_response.update(
+            {
+                "latest_pkg_urls": convert_pkg_info(latest_pkg_urls),
+            }
+        )
 
-            # more detailed info of every release's package
-            releases_info = {}
-            for key, val in releases.items():
-                if val:
-                    releases_info[key] = convert_pkg_info(val)
-
-            cleaned_response.update(
-                {
-                    "releases": release_list,
-                    "releases_pkg_info": releases_info,
-                }
-            )
-
-        # latest release's package information
-        latest_pkg_urls = dirty_response.get("urls")
-        if latest_pkg_urls:
-            cleaned_response.update(
-                {
-                    "latest_pkg_urls": convert_pkg_info(latest_pkg_urls),
-                }
-            )
-
-        r.cleaned_json = cleaned_response
+    r.cleaned_json = cleaned_response
     return r
