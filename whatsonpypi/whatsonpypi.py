@@ -24,8 +24,8 @@ def get_output(response: WoppResponse, more_out: bool = False) -> dict[str, Any]
     out_dict: dict[str, Any] = {
         "name": response.name,
         "current_version": response.latest_version,
+        "requires_python": response.requires_python,
         "summary": response.summary,
-        "homepage": response.homepage,
         "package_url": response.package_url,
         "author": response.author,
     }
@@ -33,18 +33,17 @@ def get_output(response: WoppResponse, more_out: bool = False) -> dict[str, Any]
     if more_out:
         out_dict.update(
             {
-                "author_email": response.author_email or "",
-                "releases": ", ".join(response.releases),
+                "homepage": response.homepage,
+                "releases": ", ".join(response.get_latest_releases(n=20)),
                 "project_urls": response.project_urls,
-                "requires_python": response.requires_python or "",
-                "license": response.license or "",
-                "current_release_url": response.latest_release_url or "",
+                "license": response.license,
+                "current_release_url": response.latest_release_url,
                 "current_package_info": response.latest_pkg_urls,
                 "dependencies": ", ".join(response.dependencies),
             }
         )
     else:
-        out_dict["latest_releases"] = ", ".join(response.latest_releases)
+        out_dict["latest_releases"] = ", ".join(response.get_latest_releases())
 
     return out_dict
 

@@ -25,52 +25,52 @@ class WoppResponse:
         self.ok = status_code < 400
 
     @property
-    def name(self) -> str | None:
-        return self.json.get("name")
+    def name(self) -> str:
+        return self.json.get("name", "")
 
     @property
-    def latest_version(self) -> str | None:
-        return self.json.get("latest_version")
+    def latest_version(self) -> str:
+        return self.json.get("latest_version", "")
 
     @property
-    def summary(self) -> str | None:
-        return self.json.get("summary")
+    def summary(self) -> str:
+        return self.json.get("summary", "")
 
     @property
-    def homepage(self) -> str | None:
-        return self.json.get("homepage")
-
-    @property
-    def package_url(self) -> str | None:
-        return self.json.get("package_url")
+    def package_url(self) -> str:
+        return self.json.get("package_url", "")
 
     @property
     def project_urls(self) -> dict[str, Any]:
         return self.json.get("project_urls", {}) or {}
 
     @property
-    def project_docs(self) -> str | None:
-        return self.project_urls.get("Documentation") or self.homepage
+    def homepage(self) -> str:
+        return self.project_urls.get("Homepage", self.json.get("homepage", ""))
 
     @property
-    def requires_python(self) -> str | None:
-        return self.json.get("requires_python")
+    def project_docs(self) -> str:
+        return self.project_urls.get("Documentation", self.homepage)
 
     @property
-    def license(self) -> str | None:
-        return self.json.get("license")
+    def requires_python(self) -> str:
+        return self.json.get("requires_python", "")
 
     @property
-    def author(self) -> str | None:
-        return self.json.get("author")
+    def license(self) -> str:
+        return self.json.get("license", "")
 
     @property
-    def author_email(self) -> str | None:
-        return self.json.get("author_email")
+    def author(self) -> str:
+        return self.json.get("author_email", "")
 
     @property
-    def latest_release_url(self) -> str | None:
-        return self.json.get("latest_release_url")
+    def author_email(self) -> str:
+        return self.json.get("author_email", "")
+
+    @property
+    def latest_release_url(self) -> str:
+        return self.json.get("latest_release_url", "")
 
     @property
     def dependencies(self) -> list[str]:
@@ -84,10 +84,9 @@ class WoppResponse:
     def releases(self) -> list[str]:
         return self.json.get("releases", []) or []
 
-    @property
-    def latest_releases(self) -> list[str]:
-        return self.releases[-5:]
-
+    def get_latest_releases(self, n: int = 10) -> list[str]:
+        l = len(self.releases)
+        return self.releases[l:l - (n + 1):-1]
 
 class WoppClient:
     """
