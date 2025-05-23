@@ -4,6 +4,8 @@ API client for querying PyPI JSON endpoints.
 
 from __future__ import annotations
 
+from datetime import datetime
+from operator import itemgetter
 from typing import Any, TypeVar
 
 from requests import Request, Session, hooks
@@ -89,15 +91,56 @@ class WoppResponse:
     @property
     def releases(self) -> list[str]:
         value = self.json.get("releases")
-        return list(value) if isinstance(value, dict) else []
+        return list(value) if isinstance(value, list) else []
 
     @property
     def release_info(self) -> dict[str, Any]:
         return self._get("release_info", dict, {})
 
+    def get_releases_with_dates(self) -> dict[str, datetime | None]:
+        """
+        Returns a dictionary of releases with their upload dates.
+        """
+        releases_with_dates = {}
+        for release in self.releases:
+            info = self.release_info.get(release, {})
+            release_date = None
+            if info:
+                for metadata in info.values():
+                    upload_time = metadata.get("upload_time")
+                    if upload_time:
+                        try:
+                            release_date = datetime.fromisoformat(
+                                upload_time.replace("Z", "+00:00")
+                            )
+                            break
+                        except ValueError:
+                            continue
+            releases_with_dates[release] = release_date
+        return releases_with_dates
+
+    def get_sorted_releases(self) -> list[str]:
+        """
+        Returns a sorted list of releases based on their upload dates.
+        Releases without dates are excluded from the list.
+        The list is sorted in descending order (most recent first).
+
+        :return: List of sorted release versions
+        """
+        releases_with_dates = self.get_releases_with_dates()
+        # filter and sort by datetime
+        sorted_versions = sorted(
+            ((ver, date) for ver, date in releases_with_dates.items() if date is not None),
+            key=itemgetter(1),
+            reverse=True,
+        )
+        return [ver for ver, _ in sorted_versions]
+
     def get_latest_releases(self, n: int = 10) -> list[str]:
-        total = len(self.releases)
-        return self.releases[total : total - (n + 1) : -1]
+        """
+        Returns the latest `n` releases sorted by upload time (most recent first).
+        """
+        return self.get_sorted_releases()[:n]
 
 
 class WoppClient:

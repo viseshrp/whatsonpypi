@@ -90,12 +90,16 @@ def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, 
         if key:
             digests = pkg.get("digests") or {}
             result[key] = {
-                "md5": digests.get("md5"),
-                "sha256": digests.get("sha256"),
                 "filename": pkg.get("filename"),
                 "size": pkg.get("size"),
-                "upload_time": pkg.get("upload_time"),
+                "upload_time": pkg.get("upload_time_iso_8601"),
+                "requires_python": pkg.get("requires_python"),
+                "python_version": pkg.get("python_version"),
                 "url": pkg.get("url"),
+                "yanked": pkg.get("yanked"),
+                "yanked_reason": pkg.get("yanked_reason"),
+                "md5": digests.get("md5"),
+                "sha256": digests.get("sha256"),
             }
     return result
 
@@ -134,13 +138,13 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     releases = dirty.get("releases")
     if releases:
         release_list = list(releases.keys())
-        releases_info = {
+        release_info = {
             version: convert_pkg_info(files) for version, files in releases.items() if files
         }
         clean.update(
             {
                 "releases": release_list,
-                "release_info": releases_info,
+                "release_info": release_info,
             }
         )
 
