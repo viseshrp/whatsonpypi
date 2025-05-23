@@ -40,11 +40,21 @@ from .whatsonpypi import run_query
     default=False,
     help="Flag to open PyPI page",
 )
+@click.option(
+    "-H",
+    "--history",
+    required=False,
+    default=None,
+    type=int,
+    help="Show release history. Use positive number for most"
+    " recent, negative for oldest. E.g. '--history -10' or '--history 10'",
+)
 def main(
     package: str,
     more: bool,
     docs: bool,
     page: bool,
+    history: int | None,
 ) -> None:
     """
     CLI tool to get package info from PyPI and/or manipulate requirements.
@@ -66,6 +76,7 @@ def main(
             more,
             docs,
             page,
+            history,
         )
         # output is not always expected and might be None sometimes.
         if result:

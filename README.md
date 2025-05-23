@@ -73,11 +73,14 @@ Usage: whatsonpypi [OPTIONS] PACKAGE
   $ wopp django
 
 Options:
-  -v, --version  Show the version and exit.
-  -m, --more     Flag to enable expanded output  [required]
-  -d, --docs     Flag to open docs or homepage of project
-  -o, --open     Flag to open PyPI page
-  -h, --help     Show this message and exit.
+  -v, --version          Show the version and exit.
+  -m, --more             Flag to enable expanded output  [required]
+  -d, --docs             Flag to open docs or homepage of project
+  -o, --open             Flag to open PyPI page
+  -H, --history INTEGER  Show release history. Use positive number for most
+                         recent, negative for oldest. E.g. '--history -10' or '
+                         --history 10'
+  -h, --help             Show this message and exit.
 
 ```
 <!-- [[[end]]] -->

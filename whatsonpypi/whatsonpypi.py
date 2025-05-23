@@ -54,6 +54,7 @@ def run_query(
     more_out: bool,
     launch_docs: bool,
     open_page: bool,
+    history: int | None = None,
 ) -> dict[str, Any] | None:
     """
     Run query against PyPI API and then do stuff based on user options.
@@ -61,27 +62,39 @@ def run_query(
     :param package: name of package
     :param version: version of package
     :param more_out: should output contain more detail?
-    :param open_page: should the PyPI page be launched?
     :param launch_docs: should doc URL be launched?
+    :param open_page: should the PyPI page be launched?
+    :param history: show release history
 
     :return: output if available, or None
     """
     client = WoppClient(request_hooks={"response": clean_response})
     response = client.request(package=package.lower(), version=version)
 
-    if launch_docs:
-        url = response.project_docs
-        if not url:
-            raise DocsNotFoundError
-    elif open_page:
-        url = response.package_url
-        if not url:
-            raise PageNotFoundError
+    if launch_docs or open_page:
+        if launch_docs:
+            url = response.project_docs
+            if not url:
+                raise DocsNotFoundError
+        else:
+            url = response.package_url
+            if not url:
+                raise PageNotFoundError
+        exit_status = click.launch(url)
+        if exit_status:
+            raise URLLaunchError
+    elif history is not None:
+        if history < 0:
+            # negative number means oldest releases.
+            releases = response.get_sorted_releases()[history:]
+        else:
+            # positive number means newest releases.
+            releases = response.get_sorted_releases()[:history]
+        output = {}
+        for release in releases:
+            output[release] = response.get_release_info(release)
+        return output
     else:
         return get_output(response, more_out=more_out)
-
-    exit_status = click.launch(url)
-    if exit_status:
-        raise URLLaunchError
 
     return None

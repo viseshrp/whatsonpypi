@@ -27,12 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added --history/-H flag to show package history.
 - Added a new shorter alias: `wopp`. You can now run `$ wopp requests` instead of `$ whatsonpypi requests`.
 
 ### Fixed
 
 - Fixed display of release information.
-- Display dates for releases.
 - List dependencies as a proper list.
 
 ### Changed

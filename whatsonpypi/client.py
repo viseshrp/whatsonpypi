@@ -94,8 +94,14 @@ class WoppResponse:
         return list(value) if isinstance(value, list) else []
 
     @property
-    def release_info(self) -> dict[str, Any]:
+    def release_data(self) -> dict[str, Any]:
         return self._get("release_info", dict, {})
+
+    def get_release_info(self, release: str) -> dict[str, Any]:
+        """
+        Returns the release information for a specific release version.
+        """
+        return self.release_data.get(release, {})
 
     def get_releases_with_dates(self) -> list[tuple[str, datetime]]:
         """
@@ -103,7 +109,7 @@ class WoppResponse:
         """
         releases_with_dates = []
         for release in self.releases:
-            info = self.release_info.get(release, {})
+            info = self.release_data.get(release, {})
             release_date = None
             if info:
                 # loop through package types to find the first valid upload time
