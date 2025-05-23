@@ -4,7 +4,7 @@ from typing import Any
 
 import click
 
-from .client import WoppClient
+from .client import WoppClient, WoppResponse
 from .exceptions import (
     DocsNotFoundError,
     PageNotFoundError,
@@ -13,15 +13,15 @@ from .exceptions import (
 from .utils import clean_response
 
 
-def get_output(response: Any, more_out: bool = False) -> dict[str, Any]:
+def get_output(response: WoppResponse, more_out: bool = False) -> dict[str, Any]:
     """
-    Returns final output to display
+    Returns final output to display.
 
     :param response: WoppResponse object to get the info
     :param more_out: more or less information?
     :return: dict containing output information
     """
-    out_dict = {
+    out_dict: dict[str, Any] = {
         "name": response.name,
         "current_version": response.latest_version,
         "summary": response.summary,
@@ -33,24 +33,18 @@ def get_output(response: Any, more_out: bool = False) -> dict[str, Any]:
     if more_out:
         out_dict.update(
             {
-                "author_email": response.author_email,
+                "author_email": response.author_email or "",
                 "releases": ", ".join(response.releases),
                 "project_urls": response.project_urls,
-                "requires_python": response.requires_python,
-                "license": response.license,
-                "current_release_url": response.latest_release_url,
+                "requires_python": response.requires_python or "",
+                "license": response.license or "",
+                "current_release_url": response.latest_release_url or "",
                 "current_package_info": response.latest_pkg_urls,
                 "dependencies": ", ".join(response.dependencies),
             }
         )
     else:
-        out_dict.update(
-            {
-                "latest_releases": (
-                    ", ".join(response.latest_releases) if response.latest_releases else None
-                ),
-            }
-        )
+        out_dict["latest_releases"] = ", ".join(response.latest_releases)
 
     return out_dict
 
@@ -67,34 +61,28 @@ def run_query(
 
     :param package: name of package
     :param version: version of package
-    :param more_out: should output should contain more detail?
+    :param more_out: should output contain more detail?
     :param open_page: should the PyPI page be launched?
     :param launch_docs: should doc URL be launched?
 
     :return: output if available, or None
     """
-    package = package.lower()
     client = WoppClient(request_hooks={"response": clean_response})
-    response = client.request(package=package, version=version)
+    response = client.request(package=package.lower(), version=version)
 
-    # launch of docs url
-    if launch_docs or open_page:
-        if launch_docs:
-            url = response.project_docs
-            if not url:
-                raise DocsNotFoundError
-        else:
-            url = response.package_url
-            if not url:
-                raise PageNotFoundError
+    if launch_docs:
+        url = response.project_docs
+        if not url:
+            raise DocsNotFoundError
+    elif open_page:
+        url = response.package_url
+        if not url:
+            raise PageNotFoundError
+    else:
+        return get_output(response, more_out=more_out)
 
-        exit_status = click.launch(url)
-        if exit_status:
-            raise URLLaunchError
+    exit_status = click.launch(url)
+    if exit_status:
+        raise URLLaunchError
 
-        return None
-
-    # get the output
-    out_dict = get_output(response, more_out=more_out)
-    # default out
-    return out_dict
+    return None

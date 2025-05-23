@@ -45,7 +45,7 @@ class WoppResponse:
         return self.json.get("package_url")
 
     @property
-    def project_urls(self) -> dict[str, str]:
+    def project_urls(self) -> dict[str, Any]:
         return self.json.get("project_urls", {}) or {}
 
     @property
@@ -77,7 +77,7 @@ class WoppResponse:
         return self.json.get("dependencies", []) or []
 
     @property
-    def latest_pkg_urls(self) -> dict[str, str]:
+    def latest_pkg_urls(self) -> dict[str, Any]:
         return self.json.get("latest_pkg_urls", {}) or {}
 
     @property
