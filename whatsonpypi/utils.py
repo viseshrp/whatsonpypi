@@ -132,7 +132,7 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
 
     releases = dirty.get("releases")
     if releases:
-        release_list = list(releases.keys())[::-1]
+        release_list = list(releases.keys())
         releases_info = {
             version: convert_pkg_info(files) for version, files in releases.items() if files
         }

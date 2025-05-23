@@ -86,7 +86,7 @@ class WoppResponse:
 
     @property
     def latest_releases(self) -> list[str]:
-        return self.releases[:5]
+        return self.releases[-5:]
 
 
 class WoppClient:
