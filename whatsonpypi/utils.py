@@ -97,7 +97,6 @@ def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, 
                 "upload_time": pkg.get("upload_time"),
                 "url": pkg.get("url"),
             }
-            print(result[key])
     return result
 
 
@@ -141,7 +140,7 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
         clean.update(
             {
                 "releases": release_list,
-                "releases_pkg_info": releases_info,
+                "release_info": releases_info,
             }
         )
 

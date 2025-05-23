@@ -92,8 +92,8 @@ class WoppResponse:
         return list(value) if isinstance(value, dict) else []
 
     @property
-    def releases_pkg_info(self) -> dict[str, Any]:
-        return self._get("releases_pkg_info", dict, {})
+    def release_info(self) -> dict[str, Any]:
+        return self._get("release_info", dict, {})
 
     def get_latest_releases(self, n: int = 10) -> list[str]:
         total = len(self.releases)
