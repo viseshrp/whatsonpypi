@@ -33,6 +33,10 @@ def parse_pkg_string(in_str: str) -> tuple[str | None, str | None, str | None]:
     return in_str.strip(), None, None
 
 
+def format_key(key_: str) -> str:
+    return key_.upper().replace("_", " ")
+
+
 def pretty(data: dict[str, Any], indent: int = 0) -> None:
     """
     Pretty print dictionary output.
@@ -67,10 +71,6 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
 
         console.print(table)
     else:
-
-        def format_key(key_: str) -> str:
-            return key_.upper().replace("_", " ")
-
         for key, value in data.items():
             if value:
                 click.secho("\t" * indent + format_key(key), fg="green", bold=True)
