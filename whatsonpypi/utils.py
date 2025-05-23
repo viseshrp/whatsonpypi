@@ -10,7 +10,7 @@ try:
     from rich.console import Console
     from rich.table import Table
 
-    _HAS_RICH = True
+    _HAS_RICH: bool = True
 except ImportError:
     _HAS_RICH = False
 
@@ -80,6 +80,27 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
                     click.echo("\t" * (indent + 1) + str(value))
 
 
+def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """
+    Converts a list of package info dicts into a dict keyed by packagetype.
+    """
+    result = {}
+    for pkg in pkg_url_list:
+        key = pkg.get("packagetype")
+        if key:
+            digests = pkg.get("digests") or {}
+            result[key] = {
+                "md5": digests.get("md5"),
+                "sha256": digests.get("sha256"),
+                "filename": pkg.get("filename"),
+                "size": pkg.get("size"),
+                "upload_time": pkg.get("upload_time"),
+                "url": pkg.get("url"),
+            }
+            print(result[key])
+    return result
+
+
 def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     """
     Hook called after a response is received.
@@ -91,27 +112,8 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     if r.status_code != 200:
         return r
 
-    def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-        """
-        Converts a list of package info dicts into a dict keyed by packagetype.
-        """
-        result: dict[str, dict[str, Any]] = {}
-        for pkg in pkg_url_list:
-            key = pkg.get("packagetype")
-            if key:
-                digests = pkg.get("digests") or {}
-                result[key] = {
-                    "md5": digests.get("md5"),
-                    "sha256": digests.get("sha256"),
-                    "filename": pkg.get("filename"),
-                    "size": pkg.get("size"),
-                    "upload_time": pkg.get("upload_time"),
-                    "url": pkg.get("url"),
-                }
-        return result
-
     dirty = r.json()
-    clean: dict[str, Any] = {}
+    clean = {}
 
     info = dirty.get("info")
     if info:
