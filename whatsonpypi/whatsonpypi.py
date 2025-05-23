@@ -23,22 +23,22 @@ def get_output(response: WoppResponse, more_out: bool = False) -> dict[str, Any]
     """
     out_dict: dict[str, Any] = {
         "name": response.name,
+        "summary": response.summary,
+        "author": response.author,
+        "package_url": response.package_url,
+        "homepage": response.homepage,
         "current_version": response.latest_version,
         "requires_python": response.requires_python,
-        "summary": response.summary,
-        "package_url": response.package_url,
-        "author": response.author,
     }
 
     if more_out:
         out_dict.update(
             {
-                "homepage": response.homepage,
+                "dependencies": ", ".join(response.dependencies),
                 "project_urls": response.project_urls,
                 "license": response.license,
                 "current_release_url": response.latest_release_url,
                 "current_package_info": response.latest_pkg_urls,
-                "dependencies": ", ".join(response.dependencies),
                 "releases": ", ".join(response.get_sorted_releases()),
             }
         )

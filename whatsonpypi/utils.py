@@ -126,11 +126,10 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
             "summary": info.get("summary"),
             "homepage": info.get("home_page"),
             "package_url": info.get("project_url") or info.get("package_url"),
-            "author": info.get("author"),
+            "author": info.get("author_email"),
             "project_urls": info.get("project_urls"),
             "requires_python": info.get("requires_python"),
             "license": info.get("license"),
-            "author_email": info.get("author_email"),
             "latest_release_url": info.get("release_url"),
             "dependencies": info.get("requires_dist"),
         }
