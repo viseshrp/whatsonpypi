@@ -34,12 +34,12 @@ def get_output(response: WoppResponse, more_out: bool = False) -> dict[str, Any]
         out_dict.update(
             {
                 "homepage": response.homepage,
-                "releases": ", ".join(response.get_latest_releases(n=20)),
                 "project_urls": response.project_urls,
                 "license": response.license,
                 "current_release_url": response.latest_release_url,
                 "current_package_info": response.latest_pkg_urls,
                 "dependencies": ", ".join(response.dependencies),
+                "releases": ", ".join(response.get_sorted_releases()),
             }
         )
     else:

@@ -136,7 +136,7 @@ class WoppResponse:
         )
         return [ver for ver, _ in sorted_versions]
 
-    def get_latest_releases(self, n: int = 10) -> list[str]:
+    def get_latest_releases(self, n: int = 20) -> list[str]:
         """
         Returns the latest `n` releases sorted by upload time (most recent first).
         """
