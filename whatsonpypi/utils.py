@@ -38,7 +38,7 @@ def format_key(key_: str) -> str:
     return key_.upper().replace("_", " ")
 
 
-def pretty(data: dict[str, Any], indent: int = 0) -> None:
+def pretty(data: list | dict[str, Any], indent: int = 0) -> None:
     """
     Pretty print dictionary output.
 
@@ -81,18 +81,28 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
             Panel(
                 main_table,
                 title="📦 PyPI Package Info",
-                title_align="center",
+                title_align="left",
                 border_style="yellow",
             )
         )
     else:
+        if indent == 0:
+            click.secho("📦 PyPI Package Info\n", fg="yellow", bold=True)
+
         for key, value in data.items():
-            if value:
-                click.secho("\t" * indent + format_key(key), fg="green", bold=True)
-                if isinstance(value, dict):
-                    pretty(value, indent + 1)
-                else:
-                    click.echo("\t" * (indent + 1) + str(value))
+            if not value:
+                continue
+            click.secho("\t" * indent + format_key(key), fg="green", bold=True)
+            if isinstance(value, dict):
+                pretty(value, indent + 1)
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, (dict, list)):
+                        pretty(item, indent + 1)
+                    else:
+                        click.echo("\t" * (indent + 1) + str(item))
+            else:
+                click.echo("\t" * (indent + 1) + str(value))
 
 
 def filter_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
