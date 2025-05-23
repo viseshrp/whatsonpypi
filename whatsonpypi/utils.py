@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 import re
 from typing import Any
 
@@ -48,6 +49,16 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
     :param data: Dictionary to print
     :param indent: Indentation level (used only in fallback mode)
     """
+
+    def format_value(val: Any) -> str:
+        if isinstance(val, str):
+            try:
+                dt = datetime.fromisoformat(val.replace("Z", "+00:00"))
+                return dt.strftime("%b %d, %Y %H:%M")
+            except ValueError:
+                return val
+        return str(val)
+
     if _HAS_RICH:
 
         def render_table(input_dict: dict[str, Any]) -> Table:
@@ -68,11 +79,10 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
                     nested_table = render_table(value)
                     table.add_row(key_label, nested_table)
                 elif isinstance(value, list):
-                    # Render as multiline value
-                    nested = "\n".join(str(item) for item in value)
+                    nested = "\n".join(format_value(item) for item in value)
                     table.add_row(key_label, nested)
                 else:
-                    table.add_row(key_label, str(value))
+                    table.add_row(key_label, format_value(value))
             return table
 
         console = Console()
@@ -102,9 +112,9 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
                     if isinstance(item, dict):
                         pretty(item, indent + 2)
                     else:
-                        click.echo("\t" * (indent + 2) + str(item))
+                        click.echo("\t" * (indent + 2) + format_value(item))
             else:
-                click.echo("\t" * (indent + 1) + str(value))
+                click.echo("\t" * (indent + 1) + format_value(value))
 
 
 def filter_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
