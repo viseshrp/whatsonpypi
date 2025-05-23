@@ -28,13 +28,8 @@ def parse_pkg_string(in_str: str) -> tuple[str | None, str | None, str | None]:
     """
     match = re.match(REQ_LINE_REGEX, in_str.strip())
     if match:
-        return (
-            match.group("package"),
-            match.group("version"),
-            "==",
-        )
-
-    # No version match — treat input as just the package name
+        groups = match.groupdict()
+        return groups["package"], groups["version"], "=="
     return in_str.strip(), None, None
 
 
@@ -53,8 +48,8 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
         table = Table(
             title="📦 PyPI Package Info",
             title_style="bold yellow",
-            show_header=False,  # hide the column headers
-            show_lines=True,  # enable row lines
+            show_header=False,
+            show_lines=True,
             box=box.ROUNDED,
             padding=(0, 1),
         )
@@ -72,13 +67,12 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
 
         console.print(table)
     else:
-        # Fallback to click-based output
-        def get_readable_key(key_: str) -> str:
+        def format_key(key_: str) -> str:
             return key_.upper().replace("_", " ")
 
         for key, value in data.items():
             if value:
-                click.secho("\t" * indent + get_readable_key(str(key)), fg="green", bold=True)
+                click.secho("\t" * indent + format_key(key), fg="green", bold=True)
                 if isinstance(value, dict):
                     pretty(value, indent + 1)
                 else:
@@ -93,41 +87,34 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     :param r: requests.models.Response object
     :return: modified Response object
     """
-
-    def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-        """
-        Converts a list of package info dicts
-        into a dict, where the key is the type
-        of package. eg: sdist
-
-        :param pkg_url_list:
-        :return: dict
-        """
-        package_urls: dict[str, dict[str, Any]] = {}
-        for pkg_url in pkg_url_list:
-            key = pkg_url.get("packagetype")
-            if key is not None:
-                digests = pkg_url.get("digests") or {}
-                package_urls[key] = {
-                    "md5": digests.get("md5"),
-                    "sha256": digests.get("sha256"),
-                    "filename": pkg_url.get("filename"),
-                    "size": pkg_url.get("size"),
-                    "upload_time": pkg_url.get("upload_time"),
-                    "url": pkg_url.get("url"),
-                }
-        return package_urls
-
-    # only run hooks for 200
     if r.status_code != 200:
         return r
 
-    dirty_response = r.json()
-    cleaned_response = {}
+    def convert_pkg_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+        """
+        Converts a list of package info dicts into a dict keyed by packagetype.
+        """
+        result: dict[str, dict[str, Any]] = {}
+        for pkg in pkg_url_list:
+            key = pkg.get("packagetype")
+            if key:
+                digests = pkg.get("digests") or {}
+                result[key] = {
+                    "md5": digests.get("md5"),
+                    "sha256": digests.get("sha256"),
+                    "filename": pkg.get("filename"),
+                    "size": pkg.get("size"),
+                    "upload_time": pkg.get("upload_time"),
+                    "url": pkg.get("url"),
+                }
+        return result
 
-    info = dirty_response.get("info")
+    dirty = r.json()
+    clean: dict[str, Any] = {}
+
+    info = dirty.get("info")
     if info:
-        cleaned_response = {
+        clean = {
             "name": info.get("name"),
             "latest_version": info.get("version"),
             "summary": info.get("summary"),
@@ -142,33 +129,22 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
             "dependencies": info.get("requires_dist"),
         }
 
-    # release list
-    releases = dirty_response.get("releases")
+    releases = dirty.get("releases")
     if releases:
-        release_list = list(releases.keys())
-        release_list.reverse()
+        release_list = list(releases.keys())[::-1]
+        releases_info = {
+            version: convert_pkg_info(files)
+            for version, files in releases.items()
+            if files
+        }
+        clean.update({
+            "releases": release_list,
+            "releases_pkg_info": releases_info,
+        })
 
-        # more detailed info of every release's package
-        releases_info = {}
-        for key, val in releases.items():
-            if val:
-                releases_info[key] = convert_pkg_info(val)
+    urls = dirty.get("urls")
+    if urls:
+        clean["latest_pkg_urls"] = convert_pkg_info(urls)
 
-        cleaned_response.update(
-            {
-                "releases": release_list,
-                "releases_pkg_info": releases_info,
-            }
-        )
-
-    # latest release's package information
-    latest_pkg_urls = dirty_response.get("urls")
-    if latest_pkg_urls:
-        cleaned_response.update(
-            {
-                "latest_pkg_urls": convert_pkg_info(latest_pkg_urls),
-            }
-        )
-
-    r.cleaned_json = cleaned_response
+    r.cleaned_json = clean  # type: ignore[attr-defined]
     return r
