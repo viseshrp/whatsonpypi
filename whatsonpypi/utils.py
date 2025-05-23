@@ -67,6 +67,7 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
 
         console.print(table)
     else:
+
         def format_key(key_: str) -> str:
             return key_.upper().replace("_", " ")
 
@@ -133,18 +134,18 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     if releases:
         release_list = list(releases.keys())[::-1]
         releases_info = {
-            version: convert_pkg_info(files)
-            for version, files in releases.items()
-            if files
+            version: convert_pkg_info(files) for version, files in releases.items() if files
         }
-        clean.update({
-            "releases": release_list,
-            "releases_pkg_info": releases_info,
-        })
+        clean.update(
+            {
+                "releases": release_list,
+                "releases_pkg_info": releases_info,
+            }
+        )
 
     urls = dirty.get("urls")
     if urls:
         clean["latest_pkg_urls"] = convert_pkg_info(urls)
 
-    r.cleaned_json = clean  # type: ignore[attr-defined]
+    r.cleaned_json = clean
     return r
