@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import webbrowser
 from typing import Any
-
-import click
+import webbrowser
 
 from .client import WoppClient, WoppResponse
 from .exceptions import (

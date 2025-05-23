@@ -94,7 +94,7 @@ class WoppResponse:
         return list(value) if isinstance(value, list) else []
 
     @property
-    def release_data(self) -> dict[str, Any]:
+    def release_data(self) -> dict[str, dict[str, Any]]:
         return self._get("release_info", dict, {})
 
     def get_release_info(self, release: str) -> dict[str, Any]:
