@@ -97,15 +97,16 @@ class WoppResponse:
     def release_info(self) -> dict[str, Any]:
         return self._get("release_info", dict, {})
 
-    def get_releases_with_dates(self) -> dict[str, datetime | None]:
+    def get_releases_with_dates(self) -> list[tuple[str, datetime]]:
         """
-        Returns a dictionary of releases with their upload dates.
+        Returns a list of releases with their upload dates.
         """
-        releases_with_dates = {}
+        releases_with_dates = []
         for release in self.releases:
             info = self.release_info.get(release, {})
             release_date = None
             if info:
+                # loop through package types to find the first valid upload time
                 for metadata in info.values():
                     upload_time = metadata.get("upload_time")
                     if upload_time:
@@ -116,7 +117,8 @@ class WoppResponse:
                             break
                         except ValueError:
                             continue
-            releases_with_dates[release] = release_date
+            if release_date:
+                releases_with_dates.append((release, release_date))
         return releases_with_dates
 
     def get_sorted_releases(self) -> list[str]:
@@ -127,10 +129,9 @@ class WoppResponse:
 
         :return: List of sorted release versions
         """
-        releases_with_dates = self.get_releases_with_dates()
         # filter and sort by datetime
         sorted_versions = sorted(
-            ((ver, date) for ver, date in releases_with_dates.items() if date is not None),
+            self.get_releases_with_dates(),
             key=itemgetter(1),
             reverse=True,
         )
