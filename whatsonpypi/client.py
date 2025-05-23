@@ -4,7 +4,7 @@ API client for querying PyPI JSON endpoints.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TypeVar
 
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
@@ -12,6 +12,8 @@ from requests.packages.urllib3.util.retry import Retry
 
 from .constants import PYPI_BASE_URL
 from .exceptions import PackageNotFoundError, PackageNotProvidedError
+
+T = TypeVar("T")
 
 
 class WoppResponse:
@@ -24,69 +26,74 @@ class WoppResponse:
         self.json = json
         self.ok = status_code < 400
 
+    def _get(self, key: str, expected_type: type[T], default: T) -> T:
+        value = self.json.get(key, default)
+        return value if isinstance(value, expected_type) else default
+
     @property
     def name(self) -> str:
-        return self.json.get("name", "")
+        return self._get("name", str, "")
 
     @property
     def latest_version(self) -> str:
-        return self.json.get("latest_version", "")
+        return self._get("latest_version", str, "")
 
     @property
     def summary(self) -> str:
-        return self.json.get("summary", "")
+        return self._get("summary", str, "")
 
     @property
     def package_url(self) -> str:
-        return self.json.get("package_url", "")
+        return self._get("package_url", str, "")
 
     @property
     def project_urls(self) -> dict[str, Any]:
-        return self.json.get("project_urls", {}) or {}
+        return self._get("project_urls", dict, {})
 
     @property
     def homepage(self) -> str:
-        return self.project_urls.get("Homepage", self.json.get("homepage", ""))
+        return self.project_urls.get("Homepage") or self._get("homepage", str, "")
 
     @property
     def project_docs(self) -> str:
-        return self.project_urls.get("Documentation", self.homepage)
+        return self.project_urls.get("Documentation") or self.homepage
 
     @property
     def requires_python(self) -> str:
-        return self.json.get("requires_python", "")
+        return self._get("requires_python", str, "")
 
     @property
     def license(self) -> str:
-        return self.json.get("license", "")
+        return self._get("license", str, "")
 
     @property
     def author(self) -> str:
-        return self.json.get("author_email", "")
+        return self._get("author", str, "")
 
     @property
     def author_email(self) -> str:
-        return self.json.get("author_email", "")
+        return self._get("author_email", str, "")
 
     @property
     def latest_release_url(self) -> str:
-        return self.json.get("latest_release_url", "")
+        return self._get("latest_release_url", str, "")
 
     @property
     def dependencies(self) -> list[str]:
-        return self.json.get("dependencies", []) or []
+        return self._get("dependencies", list, [])
 
     @property
     def latest_pkg_urls(self) -> dict[str, Any]:
-        return self.json.get("latest_pkg_urls", {}) or {}
+        return self._get("latest_pkg_urls", dict, {})
 
     @property
     def releases(self) -> list[str]:
-        return self.json.get("releases", []) or []
+        value = self.json.get("releases")
+        return list(value) if isinstance(value, dict) else []
 
     @property
     def releases_pkg_info(self) -> dict[str, Any]:
-        return self.json.get("releases_pkg_info", {}) or {}
+        return self._get("releases_pkg_info", dict, {})
 
     def get_latest_releases(self, n: int = 10) -> list[str]:
         total = len(self.releases)
