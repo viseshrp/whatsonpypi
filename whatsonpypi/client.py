@@ -84,9 +84,14 @@ class WoppResponse:
     def releases(self) -> list[str]:
         return self.json.get("releases", []) or []
 
+    @property
+    def releases_pkg_info(self) -> dict[str, Any]:
+        return self.json.get("releases_pkg_info", {}) or {}
+
     def get_latest_releases(self, n: int = 10) -> list[str]:
-        l = len(self.releases)
-        return self.releases[l:l - (n + 1):-1]
+        total = len(self.releases)
+        return self.releases[total : total - (n + 1) : -1]
+
 
 class WoppClient:
     """
