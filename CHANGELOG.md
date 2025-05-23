@@ -23,11 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
-## [0.4.0] - TBD
+## [0.4.0] - 2025-05-23
 
 ### Added
 
 - Added --history/-H flag to show package history.
+- Added `rich` support for better output formatting. Use `pip install whatsonpypi[rich]` to enable.
 - Added a new shorter alias: `wopp`. You can now run `$ wopp requests` instead of `$ whatsonpypi requests`.
 
 ### Fixed
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed display of release information.
 - List dependencies as a proper list.
 - Improved output formatting.
+- Fixed browser launching on Windows.
 
 ### Changed
 

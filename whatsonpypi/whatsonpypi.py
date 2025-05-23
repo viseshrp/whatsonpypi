@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import webbrowser
 from typing import Any
 
 import click
@@ -80,8 +81,8 @@ def run_query(
             url = response.package_url
             if not url:
                 raise PageNotFoundError
-        exit_status = click.launch(url)
-        if exit_status:
+        success = webbrowser.open(url)
+        if not success:
             raise URLLaunchError
     elif history is not None:
         if history < 0:
