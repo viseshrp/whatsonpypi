@@ -92,15 +92,17 @@ def pretty(data: list | dict[str, Any], indent: int = 0) -> None:
         for key, value in data.items():
             if not value:
                 continue
+
             click.secho("\t" * indent + format_key(key), fg="green", bold=True)
+
             if isinstance(value, dict):
                 pretty(value, indent + 1)
             elif isinstance(value, list):
                 for item in value:
-                    if isinstance(item, (dict, list)):
-                        pretty(item, indent + 1)
+                    if isinstance(item, dict):
+                        pretty(item, indent + 2)
                     else:
-                        click.echo("\t" * (indent + 1) + str(item))
+                        click.echo("\t" * (indent + 2) + str(item))
             else:
                 click.echo("\t" * (indent + 1) + str(value))
 
