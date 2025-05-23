@@ -24,9 +24,9 @@ class WoppResponse:
     """
 
     def __init__(self, status_code: int, json: dict[str, Any]) -> None:
-        self.status_code = status_code
-        self.json = json
-        self.ok = status_code < 400
+        self.status_code: int = status_code
+        self.json: dict[str, Any] = json
+        self._cache: dict[str, Any] = {}
 
     def _get(self, key: str, expected_type: type[T], default: T) -> T:
         value = self.json.get(key, default)
@@ -129,13 +129,15 @@ class WoppResponse:
 
         :return: List of sorted release versions
         """
-        # filter and sort by datetime
-        sorted_versions = sorted(
-            self.get_releases_with_dates(),
-            key=itemgetter(1),
-            reverse=True,
-        )
-        return [ver for ver, _ in sorted_versions]
+        if "sorted_releases" not in self._cache:
+            # filter and sort by datetime
+            sorted_releases = sorted(
+                self.get_releases_with_dates(),
+                key=itemgetter(1),
+                reverse=True,
+            )
+            self._cache["sorted_releases"] = [ver for ver, _ in sorted_releases]
+        return self._cache["sorted_releases"]
 
     def get_latest_releases(self, n: int = 20) -> list[str]:
         """
