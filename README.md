@@ -21,8 +21,66 @@ to get my ass off my terminal window.
 
 ## 🧠 How this project works
 
-No real magic here. It uses the `requests` package to hit the public PyPI
-REST API, parses the JSON and displays it. Embarrassingly simple.
+No real magic here. It uses the `requests` package to hit the public [PyPI
+REST API](https://docs.pypi.org/api/json/), parses the JSON and displays it.
+Embarrassingly simple.
+
+## 📐 Requirements
+
+* Python >= 3.9
+
+## 📦 Installation
+
+```bash
+pip install whatsonpypi
+```
+
+**OR**
+
+```bash
+pip install whatsonpypi[rich]
+```
+... if you want to use the `rich` package for a nicer output.
+
+## 🧪 Usage
+
+<!-- [[[cog
+import cog
+from whatsonpypi import cli
+from click.testing import CliRunner
+runner = CliRunner()
+result = runner.invoke(cli.main, ["--help"])
+out = result.output.replace("Usage: main", "Usage: whatsonpypi")
+cog.out(
+    "``` {{.bash}}\n"
+    "$ whatsonpypi --help\n"
+    "{}\n"
+    "```".format(out)
+)
+]]] -->
+``` {.bash}
+$ whatsonpypi --help
+Usage: whatsonpypi [OPTIONS] PACKAGE
+
+  CLI tool to get package info from PyPI and/or manipulate requirements.
+
+  Example usages:
+
+  $ whatsonpypi django
+
+  OR
+
+  $ wopp django
+
+Options:
+  -v, --version  Show the version and exit.
+  -m, --more     Flag to enable expanded output  [required]
+  -d, --docs     Flag to open docs or homepage of project
+  -o, --open     Flag to open PyPI page
+  -h, --help     Show this message and exit.
+
+```
+<!-- [[[end]]] -->
 
 ## 🛠️ Features
 
@@ -80,56 +138,6 @@ REST API, parses the JSON and displays it. Embarrassingly simple.
     > ``` bash
     > $ whatsonpypi django --docs
     > ```
-
-## 📦 Installation
-
-```bash
-pip install whatsonpypi
-```
-
-## 🧪 Usage
-
-<!-- [[[cog
-import cog
-from whatsonpypi import cli
-from click.testing import CliRunner
-runner = CliRunner()
-result = runner.invoke(cli.main, ["--help"])
-out = result.output.replace("Usage: main", "Usage: whatsonpypi")
-cog.out(
-    "``` {{.bash}}\n"
-    "$ whatsonpypi --help\n"
-    "{}\n"
-    "```".format(out)
-)
-]]] -->
-``` {.bash}
-$ whatsonpypi --help
-Usage: whatsonpypi [OPTIONS] PACKAGE
-
-  CLI tool to get package info from PyPI and/or manipulate requirements.
-
-  Example usages:
-
-  $ whatsonpypi django
-
-  OR
-
-  $ wopp django
-
-Options:
-  -v, --version  Show the version and exit.
-  -m, --more     Flag to enable expanded output  [required]
-  -d, --docs     Flag to open docs or homepage of project
-  -o, --open     Flag to open PyPI page
-  -h, --help     Show this message and exit.
-
-```
-<!-- [[[end]]] -->
-
-## 📐 Requirements
-
-* Python >= 3.9
 
 ## 🧾 Changelog
 
