@@ -18,7 +18,7 @@ from .whatsonpypi import run_query
     "-m",
     "--more",
     is_flag=True,
-    required=True,
+    required=False,
     default=False,
     show_default=True,
     help="Flag to enable expanded output",
