@@ -1,4 +1,5 @@
 SHELL := bash
+VERSION := $(shell hatch version | sed 's/\.dev.*//')
 .SHELLFLAGS := -e -x -c
 
 .PHONY: install
@@ -53,9 +54,9 @@ version: ## Print the current project version
 
 .PHONY: tag
 tag: ## 🏷 Tag the current release version (stripping .dev) and push
-	@echo "🏷 Creating Git tag from release version"
-	git tag v$(shell hatch version | sed 's/\.dev.*//')
-	git push origin --tags
+	@echo "🏷 Creating signed Git tag: v$(VERSION)"
+	git tag -s v$(VERSION) -m "Release v$(VERSION)"
+	git push origin v$(VERSION)
 
 .PHONY: check-dist
 check-dist: ## Validate dist/ artifacts (long description, format)
