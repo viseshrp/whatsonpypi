@@ -24,7 +24,7 @@ def test_run_query_more_outputs(pkg: str) -> None:
     assert "releases" in result
     assert isinstance(result["dependencies"], str)
     assert isinstance(result["project_urls"], dict)
-    assert isinstance(result["license"], str | None)
+    assert result["license"] is None or isinstance(result["license"], str)
     assert isinstance(result["releases"], str)
 
 
