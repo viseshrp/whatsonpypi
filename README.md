@@ -74,7 +74,7 @@ Usage: whatsonpypi [OPTIONS] PACKAGE
 
 Options:
   -v, --version          Show the version and exit.
-  -m, --more             Flag to enable expanded output  [required]
+  -m, --more             Flag to enable expanded output
   -d, --docs             Flag to open docs or homepage of project
   -o, --open             Flag to open PyPI page
   -H, --history INTEGER  Show release history. Use positive number for most
