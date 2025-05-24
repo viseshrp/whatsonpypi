@@ -1,8 +1,12 @@
 """
-API client
+API client for querying PyPI JSON endpoints.
 """
 
-from typing import Any, Optional
+from __future__ import annotations
+
+from datetime import datetime
+from operator import itemgetter
+from typing import Any, TypeVar
 
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
@@ -11,115 +15,175 @@ from requests.packages.urllib3.util.retry import Retry
 from .constants import PYPI_BASE_URL
 from .exceptions import PackageNotFoundError, PackageNotProvidedError
 
+T = TypeVar("T")
+
 
 class WoppResponse:
     """
-    Serializer for the response from PyPI
+    A structured wrapper for PyPI JSON API responses.
     """
 
     def __init__(self, status_code: int, json: dict[str, Any]) -> None:
-        self.status_code = status_code
-        self.json = json
-        self.ok = self.status_code < 400
+        self.status_code: int = status_code
+        self.json: dict[str, Any] = json
+        self._cache: dict[str, Any] = {}
+
+    def _get(self, key: str, expected_type: type[T], default: T) -> T:
+        value = self.json.get(key, default)
+        return value if isinstance(value, expected_type) else default
 
     @property
-    def name(self) -> Optional[str]:
-        return self.json.get("name")
+    def name(self) -> str:
+        return self._get("name", str, "")
 
     @property
-    def latest_version(self) -> Optional[str]:
-        return self.json.get("latest_version")
+    def latest_version(self) -> str:
+        return self._get("latest_version", str, "")
 
     @property
-    def summary(self) -> Optional[str]:
-        return self.json.get("summary")
+    def summary(self) -> str:
+        return self._get("summary", str, "")
 
     @property
-    def homepage(self) -> Optional[str]:
-        return self.json.get("homepage")
+    def package_url(self) -> str:
+        return self._get("package_url", str, "")
 
     @property
-    def package_url(self) -> Optional[str]:
-        return self.json.get("package_url")
+    def project_urls(self) -> dict[str, Any]:
+        return self._get("project_urls", dict, {})
 
     @property
-    def project_urls(self) -> dict[str, str]:
-        return self.json.get("project_urls", {}) or {}
+    def homepage(self) -> str:
+        return self.project_urls.get("Homepage") or self._get("homepage", str, "")
 
     @property
-    def project_docs(self) -> Optional[str]:
+    def project_docs(self) -> str:
         return self.project_urls.get("Documentation") or self.homepage
 
     @property
-    def requires_python(self) -> Optional[str]:
-        return self.json.get("requires_python")
+    def requires_python(self) -> str:
+        return self._get("requires_python", str, "")
 
     @property
-    def license(self) -> Optional[str]:
-        return self.json.get("license")
+    def license(self) -> str:
+        return self._get("license", str, "")
 
     @property
-    def author(self) -> Optional[str]:
-        return self.json.get("author")
+    def author(self) -> str:
+        return self._get("author", str, "")
 
     @property
-    def author_email(self) -> Optional[str]:
-        return self.json.get("author_email")
+    def author_email(self) -> str:
+        return self._get("author_email", str, "")
 
     @property
-    def latest_release_url(self) -> Optional[str]:
-        return self.json.get("latest_release_url")
+    def latest_release_url(self) -> str:
+        return self._get("latest_release_url", str, "")
 
     @property
     def dependencies(self) -> list[str]:
-        return self.json.get("dependencies", []) or []
+        return self._get("dependencies", list, [])
 
     @property
-    def latest_pkg_urls(self) -> dict[str, str]:
-        return self.json.get("latest_pkg_urls", {}) or {}
+    def latest_pkg_urls(self) -> dict[str, Any]:
+        return self._get("latest_pkg_urls", dict, {})
 
     @property
     def releases(self) -> list[str]:
-        # all releases
-        return self.json.get("releases", []) or []
+        value = self.json.get("releases")
+        return list(value) if isinstance(value, list) else []
 
     @property
-    def releases_pkg_info(self) -> dict[str, Any]:
-        # info of every release's package
-        return self.json.get("releases_pkg_info", {}) or {}
+    def release_data(self) -> dict[str, dict[str, Any]]:
+        return self._get("release_info", dict, {})
 
-    @property
-    def latest_releases(self) -> list[str]:
-        # last 5 releases
-        return self.releases[:5]
+    def get_release_info(self, release: str) -> dict[str, Any]:
+        """
+        Returns the release information for a specific release version.
+        """
+        return self.release_data.get(release, {})
+
+    def get_releases_with_dates(self) -> list[tuple[str, datetime]]:
+        """
+        Returns a list of releases with their upload dates.
+        """
+        releases_with_dates = []
+        for release in self.releases:
+            info = self.release_data.get(release, {})
+            release_date = None
+            if info:
+                # loop through package types to find the first valid upload time
+                for metadata in info.values():
+                    upload_time = metadata.get("upload_time")
+                    if upload_time:
+                        try:
+                            release_date = datetime.fromisoformat(
+                                upload_time.replace("Z", "+00:00")
+                            )
+                            break
+                        except ValueError:
+                            continue
+            if release_date:
+                releases_with_dates.append((release, release_date))
+        return releases_with_dates
+
+    def get_sorted_releases(self) -> list[str]:
+        """
+        Returns a sorted list of releases based on their upload dates.
+        Releases without dates are excluded from the list.
+        The list is sorted in descending order (most recent first).
+
+        :return: List of sorted release versions
+        """
+        if "sorted_releases" not in self._cache:
+            # filter and sort by datetime
+            sorted_releases = sorted(
+                self.get_releases_with_dates(),
+                key=itemgetter(1),
+                reverse=True,
+            )
+            self._cache["sorted_releases"] = [ver for ver, _ in sorted_releases]
+        sorted_versions: list[str] = self._cache["sorted_releases"]
+        return sorted_versions
+
+    def get_latest_releases(self, n: int = 20) -> list[str]:
+        """
+        Returns the latest `n` releases sorted by upload time (most recent first).
+        """
+        return self.get_sorted_releases()[:n]
 
 
 class WoppClient:
     """
-    Client for accessing the PyPI API
+    Synchronous client for accessing the PyPI JSON API.
     """
 
-    def __init__(self, pool_connections: bool = True, request_hooks: Any = None) -> None:
-        self.base_url = PYPI_BASE_URL
-        self.session = Session() if pool_connections else None
-        # default_hooks() returns {'response': []}
-        self.request_hooks = request_hooks or hooks.default_hooks()
+    def __init__(
+        self,
+        pool_connections: bool = True,
+        request_hooks: dict[str, Any] | None = None,
+    ) -> None:
+        self.base_url: str = PYPI_BASE_URL
+        self.session: Session | None = Session() if pool_connections else None
+        self.request_hooks: dict[str, list[Any]] = request_hooks or hooks.default_hooks()
 
     def request(
         self,
-        package: Optional[str] = None,
-        version: Optional[str] = None,
+        package: str | None = None,
+        version: str | None = None,
         timeout: float = 3.1,
         max_retries: int = 3,
     ) -> WoppResponse:
         """
-        Make a HTTP GET request with the provided params
+        Sends a GET request to the PyPI API and returns a structured WoppResponse.
 
-        :param timeout: request timeout seconds
-        :param max_retries: number of times to retry on failure
-        :param package: name of the python package to search
-        :param version: version of the python package to search
-        :return: response serialized by WoppResponse object
+        :param package: The package name to query
+        :param version: Optional version string
+        :param timeout: Request timeout in seconds
+        :param max_retries: Retry attempts for failed requests
+        :return: WoppResponse object with parsed data
+        :raises PackageNotProvidedError: if package is None
+        :raises PackageNotFoundError: if the PyPI API returns 404
         """
         url = self._build_url(package, version)
         req_kwargs = {
@@ -133,12 +197,9 @@ class WoppClient:
         }
 
         session = self.session or Session()
-        # instantiate Request
         request = Request(**req_kwargs)
-        # Applies session-level state such as cookies to your request
         prepared_request = session.prepare_request(request)
 
-        # use the adapter for retries
         retries = Retry(
             total=max_retries,
             backoff_factor=0.1,
@@ -148,7 +209,6 @@ class WoppClient:
         session.mount("http://", adapter)
         session.mount("https://", adapter)
 
-        # and fire!
         response = session.send(
             prepared_request,
             timeout=timeout,
@@ -158,29 +218,27 @@ class WoppClient:
         if response.status_code == 404:
             raise PackageNotFoundError
 
-        # serialize response
-        wopp_response = WoppResponse(int(response.status_code), response.cleaned_json)
-        return wopp_response
+        cleaned = response.cleaned_json
+        return WoppResponse(response.status_code, cleaned)
 
     def _build_url(
         self,
-        package: Optional[str] = None,
-        version: Optional[str] = None,
+        package: str | None,
+        version: str | None,
     ) -> str:
         """
-        Builds the URL with the path params provided.
+        Construct a fully qualified PyPI API URL.
 
-        :param package: name of package
-        :param version: version of package
-        :return: fully qualified URL
+        :param package: The package name
+        :param version: Optional version
+        :return: URL string
+        :raises PackageNotProvidedError: if package is None
         """
         if package is None:
             raise PackageNotProvidedError
 
-        url = (
+        return (
             f"{self.base_url}/{package}/{version}/json"
-            if version is not None
+            if version
             else f"{self.base_url}/{package}/json"
         )
-
-        return url

@@ -21,9 +21,69 @@ to get my ass off my terminal window.
 
 ## 🧠 How this project works
 
-No real magic here. It uses the `requests` package to hit the public PyPI
-REST API, parses the JSON and displays it. There's also some basic file
-manipulation to modify requirements files. Embarrassingly simple.
+No real magic here. It uses the `requests` package to hit the public [PyPI
+REST API](https://docs.pypi.org/api/json/), parses the JSON and displays it.
+Embarrassingly simple.
+
+## 📐 Requirements
+
+* Python >= 3.9
+
+## 📦 Installation
+
+```bash
+pip install whatsonpypi
+```
+
+**OR**
+
+```bash
+pip install whatsonpypi[rich]
+```
+... if you want to use the `rich` package for a nicer output.
+
+## 🧪 Usage
+
+<!-- [[[cog
+import cog
+from whatsonpypi import cli
+from click.testing import CliRunner
+runner = CliRunner()
+result = runner.invoke(cli.main, ["--help"])
+out = result.output.replace("Usage: main", "Usage: whatsonpypi")
+cog.out(
+    "``` {{.bash}}\n"
+    "$ whatsonpypi --help\n"
+    "{}\n"
+    "```".format(out)
+)
+]]] -->
+``` {.bash}
+$ whatsonpypi --help
+Usage: whatsonpypi [OPTIONS] PACKAGE
+
+  CLI tool to get package info from PyPI and/or manipulate requirements.
+
+  Example usages:
+
+  $ whatsonpypi django
+
+  OR
+
+  $ wopp django
+
+Options:
+  -v, --version          Show the version and exit.
+  -m, --more             Flag to enable expanded output
+  -d, --docs             Flag to open docs or homepage of project
+  -o, --open             Flag to open PyPI page
+  -H, --history INTEGER  Show release history. Use positive number for most
+                         recent, negative for oldest. E.g. '--history -10' or '
+                         --history 10'
+  -h, --help             Show this message and exit.
+
+```
+<!-- [[[end]]] -->
 
 ## 🛠️ Features
 
@@ -81,74 +141,6 @@ manipulation to modify requirements files. Embarrassingly simple.
     > ``` bash
     > $ whatsonpypi django --docs
     > ```
-
-## 📦 Installation
-
-```bash
-pip install whatsonpypi
-```
-
-## 🧪 Usage
-
-<!-- [[[cog
-import cog
-from whatsonpypi import cli
-from click.testing import CliRunner
-runner = CliRunner()
-result = runner.invoke(cli.main, ["--help"])
-out = result.output.replace("Usage: main", "Usage: whatsonpypi")
-cog.out(
-    "``` {{.bash}}\n"
-    "$ whatsonpypi --help\n"
-    "{}\n"
-    "```".format(out)
-)
-]]] -->
-``` {.bash}
-$ whatsonpypi --help
-Usage: whatsonpypi [OPTIONS] PACKAGE
-
-  CLI tool to get package info from PyPI and/or manipulate requirements.
-
-  Example usages:
-
-  $ whatsonpypi django
-
-Options:
-  -v, --version            Show the version and exit.
-  -m, --more               Flag to enable expanded output  [required]
-  -d, --docs               Flag to open docs or homepage of project
-  -o, --open               Flag to open PyPI page
-  -a, --add                Flag to enable adding of dependencies to requirement
-                           files. By default, it searches for files with names
-                           matching requirements*.txt in the current working
-                           directory and adds the dependency to the end of the
-                           file. If you want the dependency to be added to a
-                           specific line, mention the comment '#wopp' on its own
-                           line which will be replaced with the dependency.
-                           Existing dependencies will be replaced with newer
-                           versions. Dependency version by default is the latest
-                           unless specified explicitly with 'whatsonpypi
-                           package==version'. Directory to search for
-                           requirement files can be specified with --req-dir
-  -r, --req-dir DIRECTORY  Directory to search for requirement files. Only used
-                           when --add is used.  [default: .]
-  -p, --req-pattern TEXT   Filename pattern for searching requirements files.
-                           [default: requirements*.txt; required]
-  -c, --comment TEXT       Comment to be added for the dependency when using
-                           --add.
-  --ee                     use == when adding to requirements.
-  --le                     use <= when adding to requirements.
-  --ge                     use >= when adding to requirements.
-  --te                     use ~= when adding to requirements.
-  -h, --help               Show this message and exit.
-
-```
-<!-- [[[end]]] -->
-
-## 📐 Requirements
-
-* Python >= 3.9
 
 ## 🧾 Changelog
 

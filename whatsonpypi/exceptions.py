@@ -43,7 +43,7 @@ class DocsNotFoundError(WoppError):
 
 
 class PageNotFoundError(WoppError):
-    """Raised when a package does not have the PyPI url info."""
+    """Raised when a package does not have the PyPI URL info."""
 
     detail: str = "Could not find the URL to launch."
 
@@ -52,14 +52,3 @@ class URLLaunchError(WoppError):
     """Raised when there's a problem opening a URL in the browser."""
 
     detail: str = "There was a problem opening the URL in your browser."
-
-
-class RequirementsFilesNotFoundError(WoppError):
-    """Raised when no requirements files are found in provided directory path."""
-
-    def __init__(self, req_pattern: str, req_dir: str) -> None:
-        detail = (
-            f"No files were found matching pattern '{req_pattern}' "
-            f"in the provided directory path:\n{req_dir}"
-        )
-        super().__init__(extra_detail=detail)

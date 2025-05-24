@@ -23,94 +23,153 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
-## 0.4.0 (TBD)
+## [0.4.0] - 2025-05-23
 
-- BREAKING: use --open instead of --page to open PyPI page
-- Remove deprecated info from output
-- Fix releases output
-- Display dates for releases
-- List dependencies as a proper list
-- Drop Python 3.7 and 3.8 support.
-- Modernize the codebase
+### Added
 
-## 0.3.7 (2023-01-11)
+- Added --history/-H flag to show package history.
+- Added `rich` support for better output formatting.
+  - Use `pip install whatsonpypi[rich]` to enable, OR,
+  - Make sure rich is installed in your environment.
+- Added a new shorter alias: `wopp`. You can now run `$ wopp requests` instead of `$ whatsonpypi requests`.
 
-- add -o/--page to open PyPI page
+### Fixed
 
-## 0.3.6 (2023-01-11)
+- Fixed display of release information.
+- List dependencies as a proper list.
+- Improved output formatting.
+- Fixed browser launching on Windows.
 
-- fix None values from PyPI API
+### Changed
 
-## 0.3.5 (2023-01-10)
+- Removed deprecated info from output.
+- Modernized codebase structure and tooling.
 
-- remove debug logs
+### Removed
 
-## 0.3.4 (2023-01-09)
+- **BREAKING**: Removed support for adding packages to requirements files.
+- **BREAKING**: Dropped Python 3.7 and 3.8 support.
+- **BREAKING**: Renamed `--page` to `--open` for opening the PyPI page.
+- **BREAKING**: Version specific querying only supports `==` now.
 
-- fix null pointers
+## [0.3.7] - 2023-01-11
 
-## 0.3.3 (2023-01-08)
+### Added
 
-- make versions flexible
+- Added `-o/--page` flag to open PyPI page.
 
-## 0.3.2 (2023-01-07)
+## [0.3.6] - 2023-01-11
 
-- Fix version and spec parsing
+### Fixed
 
-## 0.3.1 (2023-01-07)
+- Fixed handling of `None` values from the PyPI API.
 
-- add --le, --ge, --ee, --te for requirements
+## [0.3.5] - 2023-01-10
 
-## 0.3.0 (2023-01-06)
+### Removed
 
-- dropped Python2 support. Requires 3.7+ now.
+- Removed debug logs.
 
-## 0.2.8 (2019-02-13)
+## [0.3.4] - 2023-01-09
 
-- more py2 fixes
-- use utf-8 while opening files
+### Fixed
 
-## 0.2.7 (2019-02-12)
+- Fixed null pointer errors.
 
-- fix for py2 ImportError
+## [0.3.3] - 2023-01-08
 
-## 0.2.6 (2019-02-06)
+### Changed
 
-- fix absence of new lines
+- Made version specifications more flexible.
 
-## 0.2.5 (2019-02-05)
+## [0.3.2] - 2023-01-07
 
-- fix requirements file format check
+### Fixed
 
-## 0.2.4 (2019-01-29)
+- Fixed version and spec parsing logic.
 
-- add --comment to allow mentioning comments with --add
+## [0.3.1] - 2023-01-07
 
-## 0.2.3 (2019-01-26)
+### Added
 
-- add --req-pattern to allow specifying search pattern for
-  requirements files
-- raise Error when no requirements files are found
+- Added `--le`, `--ge`, `--ee`, and `--te` flags for version specifiers.
 
-## 0.2.2 (2019-01-23)
+## [0.3.0] - 2023-01-06
 
-- Fix empty dependencies display
+### Removed
 
-## 0.2.1 (2019-01-23)
+- Dropped Python 2 support. Requires Python 3.7+ now.
 
-- Small fixes
+## [0.2.8] - 2019-02-13
 
-## 0.2.0 (2019-01-22)
+### Fixed
 
-- Add -a/--add to enable adding packages to requirement files.
-- Added -d/--docs to launch docs URL in browser
-- Allow version specific querying
+- More Python 2 compatibility fixes.
+- Ensure UTF-8 encoding when opening files.
 
-## 0.1.2 (2019-01-20)
+## [0.2.7] - 2019-02-12
 
-- Display more package info
-- added --more/-m for even more info
+### Fixed
 
-## 0.1.1 (2019-01-02)
+- Fix for `ImportError` on Python 2.
+
+## [0.2.6] - 2019-02-06
+
+### Fixed
+
+- Fixed missing newline characters.
+
+## [0.2.5] - 2019-02-05
+
+### Fixed
+
+- Fixed requirements file format validation.
+
+## [0.2.4] - 2019-01-29
+
+### Added
+
+- Added `--comment` to allow inserting comments alongside `--add`.
+
+## [0.2.3] - 2019-01-26
+
+### Added
+
+- Added `--req-pattern` to allow specifying the filename pattern for requirements files.
+
+### Fixed
+
+- Raise error when no matching requirements files are found.
+
+## [0.2.2] - 2019-01-23
+
+### Fixed
+
+- Fixed display of empty dependencies.
+
+## [0.2.1] - 2019-01-23
+
+### Fixed
+
+- Miscellaneous small fixes.
+
+## [0.2.0] - 2019-01-22
+
+### Added
+
+- Added `-a/--add` to enable writing packages to requirement files.
+- Added `-d/--docs` to launch documentation/homepage URLs.
+- Support version-specific queries.
+
+## [0.1.2] - 2019-01-20
+
+### Added
+
+- Added `--more` / `-m` flag for detailed package output.
+- Displayed more metadata fields in default output.
+
+## [0.1.1] - 2019-01-02
+
+### Added
 
 - First release on PyPI.

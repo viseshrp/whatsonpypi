@@ -46,6 +46,10 @@ CI = "https://github.com/viseshrp/whatsonpypi/actions"
 
 [project.scripts]
 whatsonpypi = "whatsonpypi.__main__:main"
+wopp = "whatsonpypi.__main__:main"
+
+[project.optional-dependencies]
+rich = ["rich>=13.0.0"]
 
 [dependency-groups]
 dev = [
@@ -187,6 +191,8 @@ select = [
     "RUF",
     # try/except linting
     "TRY",
+    # Disallow print statements
+    "T201",
 ]
 ignore = [
     "C901", # Function is too complex
