@@ -62,7 +62,7 @@ cog.out(
 $ whatsonpypi --help
 Usage: whatsonpypi [OPTIONS] PACKAGE
 
-  CLI tool to get package info from PyPI and/or manipulate requirements.
+  A CLI tool to get package info from PyPI.
 
   Example usages:
 
