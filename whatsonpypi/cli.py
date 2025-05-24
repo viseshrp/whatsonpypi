@@ -57,7 +57,7 @@ def main(
     history: int | None,
 ) -> None:
     """
-    CLI tool to get package info from PyPI and/or manipulate requirements.
+    A CLI tool to get package info from PyPI.
 
     Example usages:
 
