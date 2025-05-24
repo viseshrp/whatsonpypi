@@ -55,7 +55,7 @@ version: ## Print the current project version
 .PHONY: tag
 tag: ## 🏷 Tag the current release version (stripping .dev) and push
 	@echo "🏷 Creating signed Git tag: v$(VERSION)"
-	git tag -s v$(VERSION) -m "Release v$(VERSION)"
+	git tag v$(VERSION) -m "Release v$(VERSION)"
 	git push origin v$(VERSION)
 
 .PHONY: check-dist
