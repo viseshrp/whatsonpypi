@@ -22,12 +22,12 @@ def get_output(response: WoppResponse, more_out: bool = False) -> dict[str, Any]
     """
     out_dict: dict[str, Any] = {
         "name": response.name,
-        "summary": response.summary,
-        "author": response.author,
-        "package_url": response.package_url,
-        "homepage": response.homepage,
         "current_version": response.latest_version,
         "requires_python": response.requires_python,
+        "author": response.author,
+        "summary": response.summary,
+        "package_url": response.package_url,
+        "homepage": response.homepage,
     }
 
     if more_out:
