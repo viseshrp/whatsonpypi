@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated README to reflect new features and usage.
-- Change output order.
-- Change 'LATEST RELEASES' to last 10 releases.
+- Changed output order.
+- Changed 'LATEST RELEASES' to last 10 releases.
 
 ## [0.4.1] - 2025-05-23
 
