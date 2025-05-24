@@ -1,12 +1,14 @@
 name: Auto-update demo.gif
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - demo.tape
-  workflow_dispatch:
+      - .github/workflows/vhs.yml
+      - whatsonpypi/cli.py
 
 permissions:
   contents: write
