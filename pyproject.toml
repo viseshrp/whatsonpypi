@@ -230,7 +230,7 @@ sort_by_size = true
 exclude = ["venv/", ".venv/"]
 
 [tool.deptry]
-exclude = ["venv/.*", ".venv/.*"]
+exclude = ["venv/.*", ".venv/.*", "tests/.*"]
 
 [tool.pre-commit.default_language_versions]
 python = "3.13"

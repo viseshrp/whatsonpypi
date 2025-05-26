@@ -37,7 +37,7 @@ repos:
       - id: bandit
         args: [
           "-c", "pyproject.toml",
-          "-r", ".",
+          "-r",
           "-n", "3",
           "--severity-level", "high"
         ]
@@ -47,12 +47,6 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
-
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.45.0
-    hooks:
-      - id: markdownlint
-        args: [ --fix, --disable, MD024 ]
 
   # 🧱 Local system hooks (for tools with no mirrors or your preference)
   - repo: local
