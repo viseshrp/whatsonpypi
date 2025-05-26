@@ -95,17 +95,7 @@ Options:
     > $ whatsonpypi django
     > NAME
     >     Django
-    > LATEST VERSION
-    >     2.1.5
-    > SUMMARY
-    >     A high-level Python Web framework that encourages
-    > rapid development and clean, pragmatic design.
-    > PACKAGE URL
-    >     https://pypi.org/project/Django/
-    > AUTHOR
-    >     Django Software Foundation
-    > LATEST RELEASES
-    >     2.2a1, 2.1rc1, 2.1b1, 2.1a1, 2.1.5
+    >    ...
     > ```
 
 - For more information..
@@ -140,6 +130,22 @@ Options:
     >
     > ``` bash
     > $ whatsonpypi django --docs
+    > ```
+
+- Get release info of the last 5 versions
+
+    > Examples:
+    >
+    > ``` bash
+    > $ whatsonpypi django --history 5
+    > ```
+
+- Get release info of the first 5 versions
+
+    > Examples:
+    >
+    > ``` bash
+    > $ whatsonpypi django --history -5
     > ```
 
 ## 🧾 Changelog

@@ -146,7 +146,7 @@ class WoppResponse:
         sorted_versions: list[str] = self._cache["sorted_releases"]
         return sorted_versions
 
-    def get_latest_releases(self, n: int = 20) -> list[str]:
+    def get_latest_releases(self, n: int = 10) -> list[str]:
         """
         Returns the latest `n` releases sorted by upload time (most recent first).
         """
