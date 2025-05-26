@@ -154,6 +154,7 @@ show_contexts = true
 [tool.ruff]
 target-version = "py39"
 line-length = 100
+fix = true
 exclude = [".venv", "__init__.py"]
 
 [tool.ruff.lint]
@@ -219,12 +220,17 @@ skip = '*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.json,*.gz,Makefile'
 quiet-level = 3
 
 [tool.bandit]
-targets = ["whatsonpypi", ]
-recursive = true
-number = 3
-severity_level = "high"
-require_serial = true
-exclude_dirs = ["venv/*", ".venv/*", "tests/*"]
+targets = ["whatsonpypi"]
+exclude_dirs = ["venv", ".venv", "tests"]
+
+[tool.vulture]
+paths = ["whatsonpypi", "tests"]
+min_confidence = 80
+sort_by_size = true
+exclude = ["venv/", ".venv/"]
+
+[tool.deptry]
+exclude = ["venv/.*", ".venv/.*"]
 
 [tool.pre-commit.default_language_versions]
 python = "3.13"
