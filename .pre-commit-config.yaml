@@ -17,20 +17,12 @@ repos:
     hooks:
       # Run the linter alone
       - id: ruff-check
-        args: [
-          --fix,
-          --exit-non-zero-on-fix
-        ]
 
   # 🧪 Typing, dependency, security checks
   - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
       - id: black
-        args: [
-          --line-length=100,
-          --target-version=py39
-        ]
 
   - repo: https://github.com/pypa/pip-audit
     rev: v2.9.0
@@ -43,18 +35,18 @@ repos:
     rev: 1.8.3
     hooks:
       - id: bandit
-        args: [ "-lll", "-n", "3", "-r", "-x", "venv/*,setup.py,tests/*" ]
+        args: [
+          "-c", "pyproject.toml",
+          "-r",
+          "-n", "3",
+          "--severity-level", "high"
+        ]
+        additional_dependencies: [ "bandit[toml]" ]
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
       - id: codespell
-
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.45.0
-    hooks:
-      - id: markdownlint
-        args: [ --fix, --disable, MD024 ]
 
   # 🧱 Local system hooks (for tools with no mirrors or your preference)
   - repo: local
@@ -64,23 +56,14 @@ repos:
         entry: mypy
         language: system
         types: [ python ]
-        args: [
-          "--disallow-untyped-defs",
-          "--no-implicit-optional",
-          "--warn-unused-ignores",
-          "--warn-return-any"
-        ]
+        args: [ "--config-file=pyproject.toml" ]
 
       - id: vulture
         name: vulture
         entry: vulture
         language: system
         types: [ python ]
-        args: [
-          "whatsonpypi",
-          "tests",
-          "--min-confidence", "80"
-        ]
+        args: [ "--config", "pyproject.toml" ]
         pass_filenames: false
 
       - id: deptry
@@ -89,6 +72,7 @@ repos:
         language: python
         language_version: python3
         types: [ python ]
+        args: [ "--config", "pyproject.toml" ]
         pass_filenames: false
 
       - id: cog
