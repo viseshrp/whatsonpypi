@@ -60,7 +60,7 @@ cog.out(
 ]]] -->
 ``` {.bash}
 $ wopp --help
-Usage: whatsonpypi [OPTIONS] PACKAGE
+Usage: wopp [OPTIONS] PACKAGE
 
   A CLI tool to get package info from PyPI.
 
