@@ -53,19 +53,19 @@ def test_open_flag_opens_pypi(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_history_with_value(arg: str) -> None:
     result = CliRunner().invoke(cli.main, ["django", arg])
     assert result.exit_code == 0
-    assert "SDIST" in result.output
+    assert "MD5" in result.output and "FILENAME" in result.output
 
 
 def test_history_old() -> None:
     result = CliRunner().invoke(cli.main, ["django", "--history=-5"])
     assert result.exit_code == 0
-    assert "SDIST" in result.output and "BDIST" not in result.output and "1.2" in result.output
+    assert "1.2" in result.output
 
 
 def test_history_new() -> None:
     result = CliRunner().invoke(cli.main, ["django", "--history=5"])
     assert result.exit_code == 0
-    assert "SDIST" in result.output and "BDIST" in result.output and "1.2" not in result.output
+    assert "1.2" not in result.output
 
 
 def test_invalid_package() -> None:

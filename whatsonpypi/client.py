@@ -113,21 +113,14 @@ class WoppResponse:
         releases_with_dates = []
         for release in self.releases:
             info = self.release_data.get(release, {})
-            release_date = None
             if info:
-                # loop through package types to find the first valid upload time
-                for metadata in info.values():
-                    upload_time = metadata.get("upload_time")
-                    if upload_time:
-                        try:
-                            release_date = datetime.fromisoformat(
-                                upload_time.replace("Z", "+00:00")
-                            )
-                            break
-                        except ValueError:
-                            continue
-            if release_date:
-                releases_with_dates.append((release, release_date))
+                upload_time = info.get("upload_time")
+                if isinstance(upload_time, str):
+                    try:
+                        release_date = datetime.fromisoformat(upload_time.replace("Z", "+00:00"))
+                        releases_with_dates.append((release, release_date))
+                    except ValueError:
+                        continue
         return releases_with_dates
 
     def get_sorted_releases(self) -> list[str]:

@@ -118,28 +118,43 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
                 click.echo("\t" * (indent + 1) + format_value(value))
 
 
-def filter_release_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+def get_human_size(size_bytes: float) -> str | None:
+    if size_bytes is None or size_bytes < 0:
+        return None
+    for unit in ["B", "KB", "MB", "GB"]:
+        if size_bytes < 1024.0:
+            return f"{size_bytes:.2f} {unit}"
+        size_bytes /= 1024.0
+    return f"{size_bytes:.2f} TB"
+
+
+def filter_release_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, Any | None]:
     """
-    Converts a list of package info dicts into a dict keyed by packagetype.
+    Converts a list of package info dicts into a dict.
     """
-    result = {}
+
+    def _get_info(pkg_: dict[str, Any]) -> dict[str, Any | None]:
+        return {
+            "filename": pkg_.get("filename"),
+            "size": get_human_size(float(pkg_.get("size", 0))),
+            "upload_time": pkg_.get("upload_time_iso_8601"),
+            "requires_python": pkg_.get("requires_python"),
+            "url": pkg_.get("url"),
+            "yanked": pkg_.get("yanked"),
+            "md5": pkg_.get("digests", {}).get("md5"),
+        }
+
+    info = {}
     for pkg in pkg_url_list:
-        key = pkg.get("packagetype")
-        if key:
-            digests = pkg.get("digests") or {}
-            result[key] = {
-                "filename": pkg.get("filename"),
-                "size": pkg.get("size"),
-                "upload_time": pkg.get("upload_time_iso_8601"),
-                "requires_python": pkg.get("requires_python"),
-                "python_version": pkg.get("python_version"),
-                "url": pkg.get("url"),
-                "yanked": pkg.get("yanked"),
-                "yanked_reason": pkg.get("yanked_reason"),
-                "md5": digests.get("md5"),
-                "sha256": digests.get("sha256"),
-            }
-    return result
+        package_type = pkg.get("packagetype", "").lower()
+        if "wheel" in package_type:
+            info = _get_info(pkg)
+        else:
+            # for other types, just use the first one found
+            if not info:
+                info = _get_info(pkg)
+
+    return info
 
 
 def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
@@ -175,9 +190,11 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     releases = dirty.get("releases")
     if releases:
         release_list = list(releases.keys())
-        release_info = {
-            version: filter_release_info(files) for version, files in releases.items() if files
-        }
+        release_info = {}
+        for release_version, file_info_list in releases.items():
+            if not file_info_list:
+                continue
+            release_info[release_version] = filter_release_info(file_info_list)
         clean.update(
             {
                 "releases": release_list,

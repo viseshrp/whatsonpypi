@@ -47,4 +47,4 @@ def test_run_query_typical_with_more() -> None:
     result = run_query("rich", version=None, more_out=True, launch_docs=False, open_page=False)
     assert result is not None
     assert isinstance(result["dependencies"], str)
-    assert "sha256" in str(result["current_package_info"]).lower()
+    assert "yanked" in str(result["current_package_info"]).lower()
