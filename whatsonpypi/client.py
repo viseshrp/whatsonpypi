@@ -10,6 +10,7 @@ from typing import Any, TypeVar
 
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
+from requests.exceptions import RequestException
 from requests.packages.urllib3.util.retry import Retry
 
 from .constants import PYPI_BASE_URL
@@ -23,7 +24,7 @@ class WoppResponse:
     A structured wrapper for PyPI JSON API responses.
     """
 
-    def __init__(self, status_code: int, json: dict[str, Any]) -> None:
+    def __init__(self, status_code: int, json: dict[str, Any] | None) -> None:
         self.status_code: int = status_code
         self.json: dict[str, Any] = json or {}
         self._cache: dict[str, Any] = {}
@@ -113,21 +114,14 @@ class WoppResponse:
         releases_with_dates = []
         for release in self.releases:
             info = self.release_data.get(release, {})
-            release_date = None
             if info:
-                # loop through package types to find the first valid upload time
-                for metadata in info.values():
-                    upload_time = metadata.get("upload_time")
-                    if upload_time:
-                        try:
-                            release_date = datetime.fromisoformat(
-                                upload_time.replace("Z", "+00:00")
-                            )
-                            break
-                        except ValueError:
-                            continue
-            if release_date:
-                releases_with_dates.append((release, release_date))
+                upload_time = info.get("upload_time")
+                if isinstance(upload_time, str):
+                    try:
+                        release_date = datetime.fromisoformat(upload_time.replace("Z", "+00:00"))
+                        releases_with_dates.append((release, release_date))
+                    except ValueError:
+                        continue
         return releases_with_dates
 
     def get_sorted_releases(self) -> list[str]:
@@ -170,6 +164,25 @@ class WoppClient:
         self.session: Session | None = Session() if pool_connections else None
         self.request_hooks: dict[str, list[Any]] = request_hooks or hooks.default_hooks()
 
+    def _build_url(
+        self,
+        package: str,
+        version: str | None,
+    ) -> str:
+        """
+        Construct a fully qualified PyPI API URL.
+
+        :param package: The package name
+        :param version: Optional version
+        :return: URL string
+        """
+
+        return (
+            f"{self.base_url}/{package}/{version}/json"
+            if version
+            else f"{self.base_url}/{package}/json"
+        )
+
     def request(
         self,
         package: str | None = None,
@@ -186,8 +199,11 @@ class WoppClient:
         :param max_retries: Retry attempts for failed requests
         :return: WoppResponse object with parsed data
         :raises PackageNotProvidedError: if package is None
-        :raises PackageNotFoundError: if the PyPI API returns 404
+        :raises PackageNotFoundError: if the PyPI API returns 404 or 5xx status codes
         """
+        if package is None:
+            raise PackageNotProvidedError
+
         url = self._build_url(package, version)
         req_kwargs = {
             "method": "GET",
@@ -212,35 +228,15 @@ class WoppClient:
         session.mount("http://", adapter)
         session.mount("https://", adapter)
 
-        response = session.send(
-            prepared_request,
-            timeout=timeout,
-            allow_redirects=True,
-        )
+        try:
+            response = session.send(
+                prepared_request,
+                timeout=timeout,
+                allow_redirects=True,
+            )
+            if response.status_code == 404 or response.status_code >= 500:
+                raise PackageNotFoundError  # Treat all 5xx as failure to find package
+        except RequestException as e:
+            raise PackageNotFoundError from e
 
-        if response.status_code == 404:
-            raise PackageNotFoundError
-
-        return WoppResponse(response.status_code, response.cleaned_json)
-
-    def _build_url(
-        self,
-        package: str | None,
-        version: str | None,
-    ) -> str:
-        """
-        Construct a fully qualified PyPI API URL.
-
-        :param package: The package name
-        :param version: Optional version
-        :return: URL string
-        :raises PackageNotProvidedError: if package is None
-        """
-        if package is None:
-            raise PackageNotProvidedError
-
-        return (
-            f"{self.base_url}/{package}/{version}/json"
-            if version
-            else f"{self.base_url}/{package}/json"
-        )
+        return WoppResponse(response.status_code, getattr(response, "cleaned_json", None))

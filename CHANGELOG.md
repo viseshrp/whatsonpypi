@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [0.5.0] - <Unreleased>
 
-- TODO: Add ability to update package versions in pyproject.toml files.
+### Added
+
+- TODO: Add ability to add/update packages in pyproject.toml files.
+
+### Changed
+
+- Trim package/release info output.
+
+### Security
+
+- Fixed a security vulnerability in the `requests` library dependency by upgrading to version 2.32.4.
 
 ## [0.4.2] - 2025-05-24
 
