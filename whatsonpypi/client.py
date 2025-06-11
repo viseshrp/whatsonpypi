@@ -23,7 +23,7 @@ class WoppResponse:
     A structured wrapper for PyPI JSON API responses.
     """
 
-    def __init__(self, status_code: int, json: dict[str, Any]) -> None:
+    def __init__(self, status_code: int, json: dict[str, Any] | None) -> None:
         self.status_code: int = status_code
         self.json: dict[str, Any] = json
         self._cache: dict[str, Any] = {}
