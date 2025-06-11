@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Add ability to add/update packages in pyproject.toml files.
+- TODO: Add ability to add/update packages in pyproject.toml files.
 
 ### Changed
 
