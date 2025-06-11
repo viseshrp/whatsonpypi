@@ -17,34 +17,27 @@ def main(version: str) -> None:
         sys.exit(1)
 
     today = date.today().isoformat()
-    target_line = f"## [{version}] - <Unreleased>"
-    replacement_line = f"## [{version}] - {today}"
+    target_line = f"## [{version}] - {today}"
 
+    found = False
     lines = CHANGELOG_PATH.read_text(encoding="utf-8").splitlines()
-    replaced = False
 
-    new_lines = []
     for i, line in enumerate(lines):
         if line.strip() == target_line:
             print(f"🔍 Found line {i + 1}: {target_line}")
-            new_lines.append(replacement_line)
-            replaced = True
-        else:
-            new_lines.append(line)
+            found = True
+            break
 
-    if not replaced:
-        print(f"❌ ERROR: Could not find line exactly matching:\n   {target_line}")
-        print("🔎 Tip: Double-check your changelog formatting.")
+    if not found:
+        print("❌ ERROR: CHANGELOG.md is not ready for release.")
+        print(f"   Expected line: {target_line}")
+        print("ℹ️  Tip: Check if it's still marked as '[Unreleased]' and update it to today's date.")
         sys.exit(1)
-
-    CHANGELOG_PATH.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
-    print("✅ Successfully updated changelog:")
-    print(f"   {target_line} → {replacement_line}")
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/fix_changelog_date.py <version>")
+        print("Usage: uv run python scripts/check_changelog_date.py <version>")
         sys.exit(1)
 
     main(sys.argv[1])
