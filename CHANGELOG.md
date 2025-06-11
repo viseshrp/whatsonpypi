@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - TODO: Add ability to update package versions in pyproject.toml files.
-- TODO: Allow filtering of display output using the `--fields` flag.
 
 ### Changed
 
