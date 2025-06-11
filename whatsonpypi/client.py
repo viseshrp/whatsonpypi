@@ -25,7 +25,7 @@ class WoppResponse:
 
     def __init__(self, status_code: int, json: dict[str, Any] | None) -> None:
         self.status_code: int = status_code
-        self.json: dict[str, Any] = json
+        self.json: dict[str, Any] = json or {}
         self._cache: dict[str, Any] = {}
 
     def _get(self, key: str, expected_type: type[T], default: T) -> T:
@@ -95,13 +95,16 @@ class WoppResponse:
 
     @property
     def release_data(self) -> dict[str, dict[str, Any]]:
+        """
+        Returns a dictionary of release data keyed by version.
+        """
         return self._get("release_info", dict, {})
 
-    def get_release_info(self, release: str) -> dict[str, Any]:
+    def get_release_info(self, release_version: str) -> dict[str, Any]:
         """
         Returns the release information for a specific release version.
         """
-        return self.release_data.get(release, {})
+        return self.release_data.get(release_version, {})
 
     def get_releases_with_dates(self) -> list[tuple[str, datetime]]:
         """
@@ -218,8 +221,7 @@ class WoppClient:
         if response.status_code == 404:
             raise PackageNotFoundError
 
-        cleaned = response.cleaned_json
-        return WoppResponse(response.status_code, cleaned)
+        return WoppResponse(response.status_code, response.cleaned_json)
 
     def _build_url(
         self,

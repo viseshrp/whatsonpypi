@@ -90,8 +90,8 @@ def run_query(
             # positive number means newest releases.
             releases = response.get_sorted_releases()[:history]
         output = {}
-        for release in releases:
-            output[release] = response.get_release_info(release)
+        for release_version in releases:
+            output[release_version] = response.get_release_info(release_version)
         return output
     else:
         return get_output(response, more_out=more_out)
