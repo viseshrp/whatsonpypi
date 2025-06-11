@@ -1,6 +1,12 @@
 SHELL := bash
-VERSION := $(shell hatch version | sed 's/\.dev.*//')
 .SHELLFLAGS := -e -x -c
+
+# Cross-platform Bash
+ifeq ($(OS),Windows_NT)
+BASH := "C:/Program Files/Git/bin/bash.exe"
+else
+BASH := bash
+endif
 
 .PHONY: install
 install: ## 🚀 Set up environment and install project
@@ -53,10 +59,8 @@ version: ## Print the current project version
 	uv run hatch version
 
 .PHONY: tag
-tag: ## 🏷 Tag the current release version (stripping .dev) and push
-	@echo "🏷 Creating Git tag: v$(VERSION)"
-	git tag v$(VERSION) -m "Release v$(VERSION)"
-	git push origin v$(VERSION)
+tag: ## 🏷 Tag the current release version (fixes changelog and pushes tag)
+	$(BASH) scripts/tag_release.sh
 
 .PHONY: check-dist
 check-dist: ## Validate dist/ artifacts (long description, format)

@@ -1,9 +1,3 @@
-"""
-whatsonpypi.exceptions
------------------------
-All exceptions used in the code base are defined here.
-"""
-
 from __future__ import annotations
 
 

@@ -66,25 +66,30 @@ dev = [
     "cogapp>=3.4.1",
     "twine>=6.1.0",
     "ipdb>=0.13.13",
+    "hatch>=1.14.1",
 ]
 
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling", "hatch-timestamp-version"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-source = "vcs"
 path = "whatsonpypi/_version.py"
+source = "vcs-dev-timestamp"
+validate-bump = true
 
 [tool.hatch.version.raw-options]
 local_scheme = "no-local-version"
-version_scheme = "guess-next-dev"
+timestamp_format = "long"
 
 [tool.hatch.build.targets.wheel]
 packages = ["whatsonpypi"]
 
 [tool.hatch.build.targets.editable]
 packages = ["whatsonpypi"]
+
+[tool.hatch.envs.default]
+path = ".venv"
 
 [tool.uv]
 default-groups = "all"
@@ -205,6 +210,7 @@ max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+"scripts/*.py" = ["T201"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["whatsonpypi", "tests"]
