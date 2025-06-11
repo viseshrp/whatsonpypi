@@ -50,17 +50,17 @@ from whatsonpypi import cli
 from click.testing import CliRunner
 runner = CliRunner()
 result = runner.invoke(cli.main, ["--help"])
-out = result.output.replace("Usage: main", "Usage: whatsonpypi")
+out = result.output.replace("Usage: main", "Usage: wopp")
 cog.out(
     "``` {{.bash}}\n"
-    "$ whatsonpypi --help\n"
+    "$ wopp --help\n"
     "{}\n"
     "```".format(out)
 )
 ]]] -->
 ``` {.bash}
-$ whatsonpypi --help
-Usage: whatsonpypi [OPTIONS] PACKAGE
+$ wopp --help
+Usage: wopp [OPTIONS] PACKAGE
 
   A CLI tool to get package info from PyPI.
 
@@ -92,7 +92,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django
+    > $ wopp django
     > NAME
     >     Django
     >    ...
@@ -103,7 +103,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django --more
+    > $ wopp django --more
     > ...
     > ```
 
@@ -112,7 +112,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django==2.1.4 --more
+    > $ wopp django==2.1.4 --more
     > ...
     > ```
 
@@ -121,7 +121,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django --open
+    > $ wopp django --open
     > ```
 
 - Launch documentation URL of project in a browser tab
@@ -129,7 +129,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django --docs
+    > $ wopp django --docs
     > ```
 
 - Get release info of the last 5 versions
@@ -137,7 +137,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django --history 5
+    > $ wopp django --history 5
     > ```
 
 - Get release info of the first 5 versions
@@ -145,15 +145,7 @@ Options:
     > Examples:
     >
     > ``` bash
-    > $ whatsonpypi django --history -5
-    > ```
-
-- Filter display output using the `--fields` flag.
-
-    > Examples:
-    >
-    > ``` bash
-    > $ whatsonpypi django --fields name,current_version,latest_releases
+    > $ wopp django --history -5
     > ```
 
 ## 🧾 Changelog

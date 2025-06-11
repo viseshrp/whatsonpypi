@@ -12,7 +12,7 @@ Enter
 Show
 
 # CLI demo
-Type "whatsonpypi --help"
+Type "wopp --help"
 Sleep 2s
 Enter
 Sleep 6s
@@ -22,7 +22,7 @@ Type "clear"
 Enter
 Show
 
-Type "whatsonpypi django"
+Type "wopp django"
 Sleep 2s
 Enter
 Sleep 6s
@@ -33,7 +33,7 @@ Type "clear"
 Enter
 Show
 
-Type "whatsonpypi django --more"
+Type "wopp django --more"
 Sleep 2s
 Enter
 Sleep 6s
