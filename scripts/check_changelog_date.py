@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Check the release date for a given version in CHANGELOG.md.
+Fix the release date for a given version in CHANGELOG.md,
+by replacing '<Unreleased>' with today's date.
 """
 
 from datetime import date
@@ -30,7 +31,7 @@ def main(version: str) -> None:
     if not found:
         print("❌ ERROR: CHANGELOG.md is not ready for release.")
         print(f"   Expected line: {target_line}")
-        print("Tip: Check if it's still marked as '[Unreleased]' and update it to today's date.")
+        print("ℹ️  Tip: Check if it's still marked as '[Unreleased]' and update it to today's date.")
         sys.exit(1)
 
 
