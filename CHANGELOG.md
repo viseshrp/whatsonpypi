@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [0.5.0] - <Unreleased>
 
+### Added
+
 - TODO: Add ability to update package versions in pyproject.toml files.
+- TODO: Allow filtering of display output using the `--fields` flag.
+
+### Changed
+
+- Reduced output of release details.
+
+### Security
+
+- Fixed a security vulnerability in the `requests` library dependency by upgrading to version 2.32.4.
 
 ## [0.4.2] - 2025-05-24
 

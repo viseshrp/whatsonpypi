@@ -148,6 +148,14 @@ Options:
     > $ whatsonpypi django --history -5
     > ```
 
+- Filter display output using the `--fields` flag.
+
+    > Examples:
+    >
+    > ``` bash
+    > $ whatsonpypi django --fields name,current_version,latest_releases
+    > ```
+
 ## 🧾 Changelog
 
 See [CHANGELOG.md](https://github.com/viseshrp/whatsonpypi/blob/main/CHANGELOG.md)
