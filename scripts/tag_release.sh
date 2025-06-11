@@ -14,7 +14,7 @@ if [[ "$branch" != "main" ]]; then
   exit 1
 fi
 
-if ! git diff --quiet; then
+if ! git diff --quiet HEAD; then
   echo "❌ ERROR: Working directory is dirty. Commit your changes through a PR."
   exit 1
 fi
