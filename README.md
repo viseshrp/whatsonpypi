@@ -50,7 +50,7 @@ from whatsonpypi import cli
 from click.testing import CliRunner
 runner = CliRunner()
 result = runner.invoke(cli.main, ["--help"])
-out = result.output.replace("Usage: main", "Usage: whatsonpypi")
+out = result.output.replace("Usage: main", "Usage: wopp")
 cog.out(
     "``` {{.bash}}\n"
     "$ wopp --help\n"
