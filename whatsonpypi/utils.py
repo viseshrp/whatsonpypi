@@ -39,6 +39,16 @@ def format_key(key_: str) -> str:
     return key_.upper().replace("_", " ")
 
 
+def format_value(val: Any) -> str:
+    if isinstance(val, str):
+        try:
+            dt = datetime.fromisoformat(val.replace("Z", "+00:00"))
+            return dt.strftime("%b %d, %Y %H:%M")
+        except ValueError:
+            return val
+    return str(val)
+
+
 def pretty(data: dict[str, Any], indent: int = 0) -> None:
     """
     Pretty print dictionary output.
@@ -49,15 +59,6 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
     :param data: Dictionary to print
     :param indent: Indentation level (used only in fallback mode)
     """
-
-    def format_value(val: Any) -> str:
-        if isinstance(val, str):
-            try:
-                dt = datetime.fromisoformat(val.replace("Z", "+00:00"))
-                return dt.strftime("%b %d, %Y %H:%M")
-            except ValueError:
-                return val
-        return str(val)
 
     if _HAS_RICH:
 
@@ -117,7 +118,7 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
                 click.echo("\t" * (indent + 1) + format_value(value))
 
 
-def filter_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+def filter_release_info(pkg_url_list: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     """
     Converts a list of package info dicts into a dict keyed by packagetype.
     """
@@ -174,7 +175,9 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
     releases = dirty.get("releases")
     if releases:
         release_list = list(releases.keys())
-        release_info = {version: filter_info(files) for version, files in releases.items() if files}
+        release_info = {
+            version: filter_release_info(files) for version, files in releases.items() if files
+        }
         clean.update(
             {
                 "releases": release_list,
@@ -184,7 +187,7 @@ def clean_response(r: Any, *_args: Any, **_kwargs: Any) -> Any:
 
     urls = dirty.get("urls")
     if urls:
-        clean["latest_pkg_urls"] = filter_info(urls)
+        clean["latest_pkg_urls"] = filter_release_info(urls)
 
     r.cleaned_json = clean
     return r
