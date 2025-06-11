@@ -175,7 +175,6 @@ class WoppClient:
         :param package: The package name
         :param version: Optional version
         :return: URL string
-        :raises PackageNotProvidedError: if package is None
         """
 
         return (
@@ -200,7 +199,7 @@ class WoppClient:
         :param max_retries: Retry attempts for failed requests
         :return: WoppResponse object with parsed data
         :raises PackageNotProvidedError: if package is None
-        :raises PackageNotFoundError: if the PyPI API returns 404
+        :raises PackageNotFoundError: if the PyPI API returns 404 or 5xx status codes
         """
         if package is None:
             raise PackageNotProvidedError

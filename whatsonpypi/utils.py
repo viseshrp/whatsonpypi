@@ -119,7 +119,7 @@ def pretty(data: dict[str, Any], indent: int = 0) -> None:
 
 
 def get_human_size(size_bytes: float) -> str | None:
-    if size_bytes is None or size_bytes < 0:
+    if size_bytes < 0:
         return None
     for unit in ["B", "KB", "MB", "GB"]:
         if size_bytes < 1024.0:
