@@ -53,20 +53,25 @@ rich = ["rich>=13.0.0"]
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.2.0",
-    "uv>=0.6.17",
-    "tox>=4.25.0",
-    "tox-uv>=1.25.0",
-    "tox-gh-actions>=3.3.0",
-    "mypy>=1.15.0",
-    "deptry>=0.23.0",
-    "pytest>=8.3.5",
-    "pytest-cov>=6.1.1",
-    "vulture>=2.14",
-    "cogapp>=3.4.1",
-    "twine>=6.1.0",
-    "ipdb>=0.13.13",
-    "hatch>=1.14.1",
+    "ipdb",
+    "uv",
+    "tox",
+    "tox-uv",
+    "tox-gh-actions",
+    "pytest",
+    "pytest-cov",
+    "pre-commit",
+    "black",
+    "ruff",
+    "pip-audit",
+    "bandit[toml]",
+    "codespell",
+    "mypy",
+    "vulture",
+    "deptry",
+    "cogapp",
+    "twine",
+    "hatch",
 ]
 
 [build-system]
@@ -160,6 +165,7 @@ show_contexts = true
 target-version = "py39"
 line-length = 100
 fix = true
+unsafe-fixes = true
 exclude = [".venv", "__init__.py"]
 
 [tool.ruff.lint]
