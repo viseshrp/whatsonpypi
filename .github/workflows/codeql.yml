@@ -16,8 +16,13 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
+      # Required to upload code scanning results
       security-events: write
+
+      # Only needed if you pull in private/internal packs
       packages: read
+
+      # Required to read your repo’s contents
       actions: read
       contents: read
 
@@ -38,3 +43,6 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          # Tag results clearly for Python
+          category: "/language:python"
